@@ -65,9 +65,9 @@ Public Function day_from_cw(cw As Integer, which_day As Integer) As Date
     ' swn - string on week num
     ' swd - string on week day
     Dim swn As String, swd As String, stf As String
-    stf = Replace(tf.formula, "=", "")
-    swn = Replace(wn.formula, "-1", stf)
-    swd = Replace(wd.formula, "-1", stf)
+    stf = Replace(tf.Formula, "=", "")
+    swn = Replace(wn.Formula, "-1", stf)
+    swd = Replace(wd.Formula, "-1", stf)
     
     current_cw = Evaluate(swn)
     current_weekday = Evaluate(swd)

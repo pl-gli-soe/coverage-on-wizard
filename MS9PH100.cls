@@ -59,6 +59,10 @@ Public Function DTYP(i As Integer) As String
     DTYP = Trim(sess0.screen.getString(11 + 1 * i, 17, 4))
 End Function
 
+Public Function RECV_DATE(i As Integer) As String
+    RECV_DATE = Trim(sess0.screen.getString(11 + 1 * i, 30, 4))
+End Function
+
 Public Function duns(i As Integer) As String
     duns = Trim(sess0.screen.getString(11 + 1 * i, 65, 9))
 End Function

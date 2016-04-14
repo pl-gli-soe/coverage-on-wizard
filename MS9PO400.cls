@@ -26,7 +26,7 @@ Public Property Let pn(arg As String)
 End Property
 
 Public Property Get plt() As String
-  pn = Trim(sess0.screen.getString(3, 7, 2))
+  plt = Trim(sess0.screen.getString(3, 7, 2))
 End Property
 
 Public Property Let plt(arg As String)
@@ -46,8 +46,8 @@ End Property
 Public Function qty(i As Integer) As String
     qty = Trim(sess0.screen.getString(6 + 2 * i, 5, 8))
 End Function
-Public Function SDATE(i As Integer) As String
-    SDATE = Trim(sess0.screen.getString(6 + 2 * i, 14, 6))
+Public Function sdate(i As Integer) As String
+    sdate = Trim(sess0.screen.getString(6 + 2 * i, 14, 6))
 End Function
 Public Function PCS(i As Integer) As String
     PCS = Trim(sess0.screen.getString(6 + 2 * i, 23, 3))
@@ -61,8 +61,8 @@ End Function
 Public Function cd(i As Integer) As String
     cd = Trim(sess0.screen.getString(6 + 2 * i, 42, 1))
 End Function
-Public Function EDA(i As Integer) As String
-    EDA = Trim(sess0.screen.getString(6 + 2 * i, 46, 6))
+Public Function eda(i As Integer) As String
+    eda = Trim(sess0.screen.getString(6 + 2 * i, 46, 6))
 End Function
 Public Function ETA(i As Integer) As String
     ETA = Trim(sess0.screen.getString(6 + 2 * i, 53, 4))

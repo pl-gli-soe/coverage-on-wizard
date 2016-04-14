@@ -1,6 +1,6 @@
 Attribute VB_Name = "ExportThisProjectMod"
 ' working great!
-Global Const REPO_PATH = "C:\WORKSPACE\macros\Wizard\Coverage on Wizard\cow\repo\"
+Global Const REPO_PATH = "C:\WORKSPACE\macros\Wizard\COW\cow\repo\"
 
 Private Sub export_this_project()
     

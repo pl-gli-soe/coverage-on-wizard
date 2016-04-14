@@ -46,8 +46,8 @@ Public Function route(i As Integer) As String
     route = Trim(sess0.screen.getString(7 + 1 * i, 44, 6))
 End Function
 
-Public Function DEL_DATE(i As Integer) As String
-    DEL_DATE = Trim(sess0.screen.getString(7 + 1 * i, 52, 8))
+Public Function del_date(i As Integer) As String
+    del_date = Trim(sess0.screen.getString(7 + 1 * i, 52, 8))
 End Function
 
 Public Function DEL_WINDW(i As Integer) As String

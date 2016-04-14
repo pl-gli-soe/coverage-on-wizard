@@ -36,9 +36,11 @@ Private Sub Class_Terminate()
     Set pnl = Nothing
 End Sub
 
-Private Sub ICBalFromHandler_pobierzCbale(ich As InitConfigHandler)
+Private Sub ICBalFromHandler_pobierzCbale(ich As InitConfigHandler, Optional w As Workbook)
 
 
+
+    
      With pnl
         .pobierz_plt_raz
         .skompletuj_pny_z_arkusza_puses
@@ -64,6 +66,13 @@ Private Sub ICBalFromHandler_pobierzCbale(ich As InitConfigHandler)
                     csh.Cells(x, CBAL_PLT) = pnl.plt
                     csh.Cells(x, CBAL_PN) = kii
                     csh.Cells(x, CBAL_CBAL) = moj_cbal
+                    csh.Cells(x, Cow.CBAL_DEL_CONF) = m.Cells(r.Row, Cow.Delivery_confirmation)
+                    csh.Cells(x, Cow.CBAL_DUNS) = m.Cells(r.Row, Cow.duns)
+                    csh.Cells(x, Cow.CBAL_RESP) = m.Cells(r.Row, Cow.Responsibility)
+                    csh.Cells(x, Cow.CBAL_FUP_CODE) = m.Cells(r.Row, Cow.fup_code)
+                    csh.Cells(x, Cow.CBAL_SUPP_NM) = m.Cells(r.Row, Cow.Supplier_Name)
+                    csh.Cells(x, Cow.CBAL_TOTAL_MRD_QTY) = m.Cells(r.Row, Cow.Total_QTY)
+                    csh.Cells(x, Cow.CBAL_TOTAL_PUS_QTY) = m.Cells(r.Row, Cow.total_pus_qty)
                     
                     x = x + 1
                 End If

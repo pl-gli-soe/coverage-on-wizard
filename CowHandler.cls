@@ -198,10 +198,31 @@ Private Sub refresh_sheet(shnm As String)
         thissh.Cells(1, 5) = "QTY"
         
     ElseIf shnm = Cow.CBALS_SH_NM Then
+    
+    
+        'Public Enum E_CBAL_LIST
+        'CBAL_PLT = 1
+        'CBAL_PN
+        'CBAL_CBAL
+        'CBAL_DUNS
+        'CBAL_SUPP_NM
+        'CBAL_FUP_CODE
+        'CBAL_TOTAL_MRD_QTY
+        'CBAL_DEL_CONF
+        'CBAL_TOTAL_PUS_QTY
+        'CBAL_RESP
+        'End Enum
         
         thissh.Cells(1, 1) = "PLT"
         thissh.Cells(1, 2) = "PN"
         thissh.Cells(1, 3) = "CBAL"
+        thissh.Cells(1, 4) = "DUNS"
+        thissh.Cells(1, 5) = "SUPP NM"
+        thissh.Cells(1, 6) = "FUP CODE"
+        thissh.Cells(1, 7) = "TOTAL MRD QTY"
+        thissh.Cells(1, 8) = "DEL CONF"
+        thissh.Cells(1, 9) = "TOTAL PUS QTY"
+        thissh.Cells(1, 10) = "RESP"
     End If
 End Sub
 
@@ -251,7 +272,7 @@ Private Sub take_cbal_from_wizard()
     If G_SOURCE_WIZARD Is Nothing Then
         
         With WybierzPlikForm
-        .init FOMULARZ_WYBORU_PLIKU_DLA_RQM
+        .init FOMULARZ_WYBORU_PLIKU_DLA_CBAL
         .Show
     End With
     Else

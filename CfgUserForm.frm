@@ -27,11 +27,11 @@ Private Sub BtnSubmit_Click()
     ' nalezy wsadzic faktycznie istniejace warunki
     ' ich.cbalFromWhere = E_CBAL_FROM_MGO
     
-    If Me.OptionButtonMIXED.Value = True Then
+    If Me.OptionButtonPUSMIXED.Value = True Then
         ich.pusFromWhere = E_PUS_MIX
-    ElseIf Me.OptionButtonPUS_MGO.Value = True Then
+    ElseIf Me.OptionButtonPUSMGO.Value = True Then
         ich.pusFromWhere = E_PUS_MGO
-    ElseIf Me.OptionButtonWIZARD.Value = True Then
+    ElseIf Me.OptionButtonPUSWIZARD.Value = True Then
         ich.pusFromWhere = E_PUS_WIZARD
     End If
     
@@ -43,9 +43,9 @@ Private Sub BtnSubmit_Click()
     ich.addRecv = Me.CheckBoxRECV.Value
     
     
-    If Me.OptionButtonPUSesFromWiz.Value = True Then
+    If Me.OptionButtonCbalFromWizard.Value = True Then
         ich.cbalFromWhere = E_CBAL_FROM_WIZARD
-    ElseIf Me.OptionButtonPUSesFromMGO.Value = True Then
+    ElseIf Me.OptionButtonCbalFromMGO.Value = True Then
         ich.cbalFromWhere = E_CBAL_FROM_MGO
     End If
     

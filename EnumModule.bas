@@ -1,4 +1,22 @@
 Attribute VB_Name = "EnumModule"
+' COORD LIST SECTION
+' ===================
+Public Enum E_COORDLIST
+    COORDLIST_PLT = 1
+    COORDLIST_PN
+    COORDLIST_DUNS
+    COORDLIST_SUPPNM
+    COORDLIST_RESP
+    COORDLIST_FUPCODE
+    COORDLIST_TOTAL
+    COORDLIST_CBAL
+    COORDLIST_DELCONF
+    COORDLIST_TOTALPUS
+    COORDLIST_FIRST_PUS_PARAM
+End Enum
+' ===================
+
+
 Public Enum E_PUS_CZY_RQM_CZY_CBAL
     FOMULARZ_WYBORU_PLIKU_DLA_PUS
     FOMULARZ_WYBORU_PLIKU_DLA_RQM
@@ -10,6 +28,13 @@ Public Enum E_CBAL_LIST
     CBAL_PLT = 1
     CBAL_PN
     CBAL_CBAL
+    CBAL_DUNS
+    CBAL_SUPP_NM
+    CBAL_FUP_CODE
+    CBAL_TOTAL_MRD_QTY
+    CBAL_DEL_CONF
+    CBAL_TOTAL_PUS_QTY
+    CBAL_RESP
 End Enum
 
 Public Enum E_RQMS_LIST
@@ -162,7 +187,7 @@ Public Enum E_MASTER_MANDATORY_COLUMNS
     Delivery_confirmation
     First_Confirmed_PUS_Date
     Delivery_reconfirmation
-    Total_PUS_QTY
+    total_pus_qty
     Total_PUS_STATUS
     Comments
     Bottleneck

@@ -11,9 +11,35 @@ Public plt As String
 Public pn As String
 Public cbal As Long
 
+Public resp As String
+Public fup_code As String
+Public supp_nm As String
+Public duns As String
+Public total_mrd_qty As String
+Public del_conf As String
+Public total_pus_qty As Long
+
 Private slownik_cov_items As Dictionary
 Private i As CoverageItem
 Private j As CoordItem
+
+
+Public Function get_total_pus_qty() As Long
+    
+    get_total_pus_qty = CLng(total_pus_qty)
+End Function
+
+Public Sub calc_total_pus_qty_based_on_dictionary_coord_list(mj As CoordItem)
+
+
+    total_pus_qty = 0
+    
+    For Each ki In slownik_cov_items.Keys
+        Set mj = slownik_cov_items(ki)
+        
+        total_pus_qty = total_pus_qty + CLng(j.qty)
+    Next
+End Sub
 
 
 Public Function get_puses() As Dictionary
@@ -136,6 +162,8 @@ Public Sub dodaj_lub_zmien_pus_dla_coord_list(pus_name As Range, r As Range, pfw
     Dim scope_ref As Range
     Set scope_ref = r.Offset(0, Cow.PUSES_ON_MGO - Cow.PUSES_PLT)
     
+    Set j = Nothing
+    
     Dim czy_przegladamy_te_linie As Boolean
     czy_przegladamy_te_linie = False
     
@@ -184,7 +212,7 @@ Public Sub dodaj_lub_zmien_pus_dla_coord_list(pus_name As Range, r As Range, pfw
             j.pus_date = CDate(r.Offset(0, Cow.PUSES_PUS_DATE - Cow.PUSES_PLT))
             j.pus_name = CStr(r.Offset(0, Cow.PUSES_PUS_NAME - Cow.PUSES_PLT))
             
-            slownik_cov_items.Add cwkey, j
+            slownik_cov_items.Add ki, j
             
             
             

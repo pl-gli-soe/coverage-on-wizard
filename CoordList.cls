@@ -45,7 +45,7 @@ Private Sub ICoverage_makeCoverage(ich As InitConfigHandler)
 
 
     Set r = coordsh.Range("a1")
-    r = "coverage based on: , " & Cow.PUSES_SH_NM & " & " & Cow.CBALS_SH_NM & ". Time: " & CStr(Now)
+    r = "COORD LIST BASED ON: , " & Cow.PUSES_SH_NM & " & " & Cow.CBALS_SH_NM & ". Time: " & CStr(Now)
     
     Set r = r.Offset(1, 0)
 
@@ -53,7 +53,16 @@ Private Sub ICoverage_makeCoverage(ich As InitConfigHandler)
     pobierz_pusy
     
     przygotuj_coord_list_na_postawie_pobranych_danych coordsh
+    simpleAutoFit
     koloruj
+End Sub
+
+Private Sub simpleAutoFit()
+
+    With coordsh
+        
+        .Columns("B:ZZ").AutoFit
+    End With
 End Sub
 
 Private Sub przygotuj_coord_list_na_postawie_pobranych_danych(s As Worksheet)
@@ -63,8 +72,20 @@ Private Sub przygotuj_coord_list_na_postawie_pobranych_danych(s As Worksheet)
     ' ==============================================================
     Set r = s.Range("A2")
     r = "PLT"
-    r.Offset(0, 1) = "PN"
-    r.Offset(0, 2) = "CBAL"
+    r.Offset(0, Cow.COORDLIST_PN - 1) = "PN"
+    r.Offset(0, Cow.COORDLIST_DUNS - 1) = "DUNS"
+    r.Offset(0, Cow.COORDLIST_SUPPNM - 1) = "SUPP NM"
+    r.Offset(0, Cow.COORDLIST_RESP - 1) = "RESP"
+    r.Offset(0, Cow.COORDLIST_FUPCODE - 1) = "FUP CODE"
+    r.Offset(0, Cow.COORDLIST_TOTAL - 1) = "TOTAL MRD QTY"
+    
+    r.Offset(0, Cow.COORDLIST_CBAL - 1) = "CBAL"
+    
+    r.Offset(0, Cow.COORDLIST_DELCONF - 1) = "DEL CONF"
+    r.Offset(0, Cow.COORDLIST_TOTALPUS - 1) = "TOTAL PUS QTY"
+    
+    
+    i = 1 ' ile iteracji kolumn
     
     ' A3 lecimy z danymi
     Set r = r.Offset(1, 0)
@@ -73,23 +94,50 @@ Private Sub przygotuj_coord_list_na_postawie_pobranych_danych(s As Worksheet)
     
         Set ci = slownik(k)
         r = ci.plt
-        r.Offset(0, 1) = ci.pn
-        r.Offset(0, 2) = ci.cbal
+        r.Offset(0, Cow.COORDLIST_PN - 1) = ci.pn
+        r.Offset(0, Cow.COORDLIST_DUNS - 1) = ci.duns
+        r.Offset(0, Cow.COORDLIST_SUPPNM - 1) = ci.supp_nm
+        r.Offset(0, Cow.COORDLIST_RESP - 1) = ci.resp
+        r.Offset(0, Cow.COORDLIST_FUPCODE - 1) = ci.fup_code
+        r.Offset(0, Cow.COORDLIST_TOTAL - 1) = ci.total_mrd_qty
         
-        lecimy_z_iteracja_pusow r.Offset(0, 3), ci
+        r.Offset(0, Cow.COORDLIST_CBAL - 1) = ci.cbal
+        
+        r.Offset(0, Cow.COORDLIST_DELCONF - 1) = ci.del_conf
+        r.Offset(0, Cow.COORDLIST_TOTALPUS - 1) = ci.get_total_pus_qty
+        
+        
+        
+        lecimy_z_iteracja_pusow r.Offset(0, Cow.COORDLIST_FIRST_PUS_PARAM - 1), ci, i
+        
         
         Set r = r.Offset(1, 0)
         
     Next
     
     
+    zbuduj_labelki_pod_max_pusow_w_iteracji i
     ' ==============================================================
 
 End Sub
 
-Private Sub lecimy_z_iteracja_pusow(rr As Range, c As CoverageIteration)
+Private Sub zbuduj_labelki_pod_max_pusow_w_iteracji(i As Variant)
+    
+    For x = 1 To i
+        coordsh.Range("A2").End(xlToRight).Offset(0, 1) = "DEL DATE"
+        coordsh.Range("A2").End(xlToRight).Offset(0, 1) = "PUS DATE"
+        coordsh.Range("A2").End(xlToRight).Offset(0, 1) = "QTY"
+        coordsh.Range("A2").End(xlToRight).Offset(0, 1) = "PUS #"
+    Next x
+End Sub
+
+Private Sub lecimy_z_iteracja_pusow(rr As Range, c As CoverageIteration, ByRef ile_iteracji_kolumn As Variant)
 
     Dim i As CoordItem
+    
+    If c.get_puses.COUNT > ile_iteracji_kolumn Then
+        ile_iteracji_kolumn = c.get_puses.COUNT
+    End If
 
     For Each k In c.get_puses().Keys()
         
@@ -119,7 +167,21 @@ Private Sub pobierz_cbale()
                 Set ci = New CoverageIteration
                 ci.plt = CStr(r.Offset(0, 0))
                 ci.pn = CStr(r.Offset(0, 1))
-                ci.cbal = CLng(r.Offset(0, 2))
+                ci.cbal = CLng(r.Offset(0, Cow.CBAL_CBAL - 1))
+                ci.del_conf = CStr(r.Offset(0, Cow.CBAL_DEL_CONF - 1))
+                ci.duns = CStr(r.Offset(O, Cow.CBAL_DUNS - 1))
+                ci.resp = CStr(r.Offset(0, Cow.CBAL_RESP - 1))
+                ci.fup_code = CStr(r.Offset(0, Cow.CBAL_FUP_CODE - 1))
+                ci.supp_nm = CStr(r.Offset(0, Cow.CBAL_SUPP_NM - 1))
+                ci.total_mrd_qty = CStr(r.Offset(0, Cow.CBAL_TOTAL_MRD_QTY - 1))
+                
+                ' teraz sprawdz total pusy czy jest match
+                ' cos tu nie hula
+                ci.total_pus_qty = CLng(r.Offset(0, Cow.CBAL_TOTAL_PUS_QTY - 1))
+                ' ci.calc_total_pus_qty_based_on_dictionary_coord_list New CoordItem
+                'If CLng(ci.get_total_pus_qty) = CLng(r.Offset(0, Cow.CBAL_TOTAL_PUS_QTY)) Then
+                '
+                'End If
                 
                 
                 

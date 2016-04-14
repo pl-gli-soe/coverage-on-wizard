@@ -117,6 +117,21 @@ Public Function convertToDateFromMS9POP00Date(ms9po400_date As String) As Date
     convertToDateFromMS9POP00Date = CDate(CStr(2000 + Int(Right(ms9po400_date, 2))) & "-" & CStr(FromMGOMonth(Right(Left(ms9po400_date, 5), 2))) & "-" & CStr(Int(Left(ms9po400_date, 2))))
 End Function
 
+
+Public Function convertToDateFromMS9PH100ShortDate(ms9ph100_shortdate As String) As Date
+    Dim tmp_date As Date
+    tmp_date = CDate(Format(Now, "yyyy-mm-dd")) - 100
+
+    If tmp_date <= CDate(CStr(Format(Now, "yyyy")) & "-" & CStr(FromMGOMonth(Right(ms9ph100_shortdate, 2))) & "-" & CStr(Left(ms9ph100_shortdate, 2))) Then
+        
+        '--------------------------------------------------YEAR-------------------------------------MONTH-------------------------------------DAY--------------
+        convertToDateFromMS9PH100ShortDate = CDate(CStr(Format(Now, "yyyy")) & "-" & CStr(FromMGOMonth(Right(ms9ph100_shortdate, 2))) & "-" & CStr(Left(ms9ph100_shortdate, 2)))
+    Else
+        '--------------------------------------------------YEAR-------------------------------------MONTH---------------------------------------------DAY--------------
+        convertToDateFromMS9PH100ShortDate = CDate(CStr(Int(Format(Now, "yyyy") + 1)) & "-" & CStr(FromMGOMonth(Right(ms9ph100_shortdate, 2))) & "-" & CStr(Left(ms9ph100_shortdate, 2)))
+    End If
+End Function
+
 Public Function convertToDateFromMS9POP00ShortDate(ms9pop00_shortdate As String) As Date
 
 

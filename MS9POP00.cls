@@ -175,8 +175,8 @@ Public Property Get O() As String
     O = Trim(sess0.screen.getString(15, 4, 25))
 End Property
 
-Public Property Get F() As String
-    F = Trim(sess0.screen.getString(15, 43, 38))
+Public Property Get f() As String
+    f = Trim(sess0.screen.getString(15, 43, 38))
 End Property
 
 

@@ -50,9 +50,10 @@ Private Sub ListBox1_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
             
         ElseIf e = FOMULARZ_WYBORU_PLIKU_DLA_CBAL Then
         
+            Set Cow.G_SOURCE_WIZARD = Workbooks(CStr(Me.ListBox1.Value))
             Dim c As ICBalFromHandler
             Set c = New CBalFromWizardHandler
-            c.pobierzCbale Nothing
+            c.pobierzCbale Nothing, Workbooks(CStr(Me.ListBox1.Value))
         End If
         
     Else

@@ -7,6 +7,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Public Sub pobierzCbale(ich As InitConfigHandler)
+Public Sub pobierzCbale(ich As InitConfigHandler, Optional w As Workbook)
 
 End Sub

@@ -43,7 +43,7 @@ Private Sub Class_Terminate()
     Set pnl = Nothing
 End Sub
 
-Private Sub ICBalFromHandler_pobierzCbale(ich As InitConfigHandler)
+Private Sub ICBalFromHandler_pobierzCbale(ich As InitConfigHandler, Optional w As Workbook)
 
 
     With pnl
@@ -71,6 +71,9 @@ Private Sub ICBalFromHandler_pobierzCbale(ich As InitConfigHandler)
                 csh.Cells(x, CBAL_PLT) = pnl.plt
                 csh.Cells(x, CBAL_PN) = kii
                 csh.Cells(x, CBAL_CBAL) = .cbal
+                csh.Cells(x, Cow.CBAL_DUNS) = .duns
+                csh.Cells(x, Cow.CBAL_FUP_CODE) = .F_U
+                csh.Cells(x, Cow.CBAL_SUPP_NM) = .SUPPLIER
                 
                 x = x + 1
             End With

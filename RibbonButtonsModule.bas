@@ -9,30 +9,56 @@ Public Sub run_cow(ictrl As IRibbonControl)
     
         ' zanim show
         ' ====================================
+        
+        ' ' falty section ' '
         .CheckBoxPUSes.Value = False
+        .CheckBoxCBALs.Value = False
         .CheckBoxRECV.Value = False
         .CheckBoxRQMs.Value = False
         
-        .OptionButtonMGO.Value = False
-        .OptionButtonPUS_MGO.Value = False
-        .OptionButtonMIXED.Value = False
+        .CheckBoxRunFlats.Value = False
+        ' ' falty section ' '
         
-        .OptionButtonMGO.Value = False
-        .OptionButtonWGEN.Value = False
+        
+        ' jak wypelnic arkusz puses
+        ' ============================
+        
+        .OptionButtonPUSMGO.Value = False
+        .OptionButtonPUSMIXED.Value = False
+        .OptionButtonPUSWIZARD.Value = False
+        
+        ' ============================
+
+        '' cbal section ''
+        ' ====================================
+        .OptionButtonCbalFromMGO.Value = False
+        .OptionButtonCbalFromWGEN.Value = False
         .OptionButtonCbalFromWizard.Value = False
         
+        ' ====================================
         
+        ' recv section
+        ' ====================================
+        .CheckBoxRECV.Value = False
+        ' ====================================
+        
+        
+        
+        
+        ' coverage and coord lilst
+        ' ====================================
         .CheckBoxRunCov.Value = False
-        .CheckBoxRunFlats.Value = False
+        .CheckBoxCoordList.Value = False
+        ' ====================================
         
-        ' cov type
+        ' cov and coord list run type
         ' ====================================
         .OptionButtonPUSesFromMGO.Value = False
         .OptionButtonPUSesFromWiz.Value = False
         
         
         ' ====================================
-        .CheckBoxCoordList.Value = False
+        
         
         ' ====================================
         .connectWithExternalIch ich

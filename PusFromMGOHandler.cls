@@ -7,6 +7,23 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+' FORREST SOFTWARE
+' Copyright (c) 2015 Mateusz Forrest Milewski
+'
+' Permission is hereby granted, free of charge,
+' to any person obtaining a copy of this software and associated documentation files (the "Software"),
+' to deal in the Software without restriction, including without limitation the rights to
+' use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+' and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+'
+' The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+'
+' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+' INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+' FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+' IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+' WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Implements IPUSTaker
 
 
@@ -74,6 +91,10 @@ Private Sub m_pobierz_pusy()
         Set ph = New PusHandler
         
         ' Debug.Print pn_dic.COUNT
+        Dim sh As StatusHandler
+        Set sh = New StatusHandler
+        sh.init_statusbar pnl.pn_dic.COUNT
+        sh.show
     
         For Each ki In pnl.pn_dic.Keys()
         
@@ -113,7 +134,12 @@ Private Sub m_pobierz_pusy()
                     ph.take_asns_from_mgo m, m.pMS9PO400
                 End With
             End If
+            
+            sh.progress_increase
         Next
+        
+        sh.hide
+        Set sh = Nothing
         
         ' tutaj jest lepiej po petli - uzupelniamy dictionary
         ' wszystkim bez polowicznych iteracji
@@ -153,6 +179,14 @@ Private Sub add_recv()
     
         If pnl.pn_dic.COUNT > 0 Then
         
+        
+        
+            Dim sh As StatusHandler
+            Set sh = New StatusHandler
+            sh.init_statusbar pnl.pn_dic.COUNT
+            sh.show
+        
+        
             On Error Resume Next
             For Each ki In pnl.pn_dic.Keys()
             
@@ -187,7 +221,7 @@ Private Sub add_recv()
                                                     i.recv = CLng(.qty(Int(x)))
                                                     If CLng(.qty(Int(x))) = 0 Then
                                                         p.recv = ON_ZERO
-                                                    ElseIf i.recv = i.del_qty Then
+                                                    ElseIf CLng(i.recv) = CLng(i.qty) Then
                                                         p.recv = INLINE_WITH_QTY
                                                     Else
                                                         p.recv = NOT_INLINE_WITH_QTY
@@ -211,7 +245,7 @@ Private Sub add_recv()
                                                 i.recv = CLng(.qty(Int(x)))
                                                 If CLng(.qty(Int(x))) = 0 Then
                                                     p.recv = ON_ZERO
-                                                ElseIf i.recv = i.del_qty Then
+                                                ElseIf CLng(i.recv) = CLng(i.qty) Then
                                                     p.recv = INLINE_WITH_QTY
                                                 Else
                                                     p.recv = NOT_INLINE_WITH_QTY
@@ -275,7 +309,12 @@ Private Sub add_recv()
                     End If
                     
                 End With
+                
+                sh.progress_increase
             Next ki
+            
+            sh.hide
+            Set sh = Nothing
         End If
     End If
     

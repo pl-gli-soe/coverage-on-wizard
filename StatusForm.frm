@@ -1,12 +1,20 @@
-VERSION 1.0 CLASS
-BEGIN
-  MultiUse = -1  'True
-END
-Attribute VB_Name = "ZK7PPUD0"
+VERSION 5.00
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} StatusForm 
+   Caption         =   "Status"
+   ClientHeight    =   1170
+   ClientLeft      =   45
+   ClientTop       =   375
+   ClientWidth     =   7770
+   OleObjectBlob   =   "StatusForm.frx":0000
+   StartUpPosition =   1  'CenterOwner
+End
+Attribute VB_Name = "StatusForm"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
+
 ' FORREST SOFTWARE
 ' Copyright (c) 2015 Mateusz Forrest Milewski
 '
@@ -24,36 +32,21 @@ Attribute VB_Exposed = False
 ' IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 ' WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-Private sess0 As Object
-
-Public Property Let sesja(ByRef arg As Object)
-    Set sess0 = arg
-End Property
-
-Public Property Get sesja() As Object
-    Set sesja = sess0
-End Property
-
-Public Property Let pus(arg As String)
-    sess0.screen.putString CStr(arg), 4, 39
-End Property
-
-Public Property Get pus() As String
-    pus = Trim(sess0.screen.getString(4, 39, 9))
-End Property
-
-Public Property Let plt(arg As String)
-    sess0.screen.putString CStr(arg), 4, 7
-End Property
 
 
 
-' musisz tutaj mateuszek pamietac ze mamy tutaj surowe cztery liczby bez znaku ":"
-Public Property Get fst_pickup_time_window() As String
-    fst_pickup_time_window = Trim(sess0.screen.getString(6, 39, 4))
-End Property
+Private Sub FrameProgress_Click()
+    End
+End Sub
 
+Private Sub PasekPostepu_Click()
+    End
+End Sub
 
+Private Sub TloPaskaPostepu_Click()
+    End
+End Sub
 
-
-
+Private Sub UserForm_Click()
+    End
+End Sub

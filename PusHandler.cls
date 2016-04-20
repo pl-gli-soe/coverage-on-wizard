@@ -7,6 +7,23 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+' FORREST SOFTWARE
+' Copyright (c) 2015 Mateusz Forrest Milewski
+'
+' Permission is hereby granted, free of charge,
+' to any person obtaining a copy of this software and associated documentation files (the "Software"),
+' to deal in the Software without restriction, including without limitation the rights to
+' use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+' and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+'
+' The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+'
+' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+' INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+' FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+' IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+' WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Private puses As Dictionary
 Private p As pus
 Private item As PnInPus
@@ -401,31 +418,35 @@ Private Sub pracuj_na_danych()
                                     
                                     ' recv
                                     this_psh.Cells(x, Cow.PUSES_RECV) = item.recv
-                                    this_psh.Cells(x, Cow.PUSES_BOOL_RECV) = p.recv
                                     
+                                    
+                                    def_recv_status this_psh.Cells(x, Cow.PUSES_BOOL_RECV), _
+                                        p, CLng(this_psh.Cells(x, Cow.PUSES_RECV)), _
+                                        CLng(this_psh.Cells(x, Cow.PUSES_QTY)), _
+                                        CLng(this_psh.Cells(x, Cow.PUSES_DEL_QTY))
                                     
                                     ' checks
                                     p.log = ""
                                     
                                     ' check dates
                                     ' ----------------------------------------------------------------------------
-                                    If CDbl(CDate(this_psh.Cells(x, Cow.PUSES_DEL_DATE)) - CDate(p.eda)) > 1# Then
-                                        p.log = p.log & Chr(10) & " edas not inline"
-                                    End If
+                                    'If CDbl(CDate(this_psh.Cells(x, Cow.PUSES_DEL_DATE)) - CDate(p.eda)) > 1# Then
+                                    '    p.log = " wizard & mgo data not inline"
+                                    'End If
                                     
-                                    If CDbl(CDate(this_psh.Cells(x, Cow.PUSES_PUS_DATE)) - CDate(p.sdate)) > 1# Then
-                                        p.log = p.log & Chr(10) & " sdates not inline"
-                                    End If
+                                    'If CDbl(CDate(this_psh.Cells(x, Cow.PUSES_PUS_DATE)) - CDate(p.sdate)) > 1# Then
+                                    '    p.log = " wizard & mgo data not inline"
+                                    'End If
                                     ' ----------------------------------------------------------------------------
                                     
                                     ' check qty
                                     ' ----------------------------------------------------------------------------
-                                    If Math.Abs(CDbl(this_psh.Cells(x, Cow.PUSES_QTY)) - CDbl(item.del_qty)) > 0# Then
-                                        p.log = p.log & Chr(10) & " qty not inline"
-                                    End If
+                                    'If Math.Abs(CDbl(this_psh.Cells(x, Cow.PUSES_QTY)) - CDbl(item.del_qty)) > 0# Then
+                                    '    p.log = " wizard & mgo data not inline"
+                                    'End If
                                     ' ----------------------------------------------------------------------------
                                     
-                                    this_psh.Cells(x, Cow.PUSES_LOG) = p.log
+                                    'this_psh.Cells(x, Cow.PUSES_LOG) = p.log
                                 
                                     ' Exit For
                                     czy_dopisujemy_nowy_rekord_na_dnie = False
@@ -450,7 +471,11 @@ Private Sub pracuj_na_danych()
                             this_psh.Cells(x, 6) = item.qty
                             this_psh.Cells(x, 7) = item.del_qty
                             this_psh.Cells(x, 8) = item.recv
-                            this_psh.Cells(x, 9) = p.recv
+                            
+                            def_recv_status this_psh.Cells(x, 9), p, CLng(item.recv), CLng(item.qty), CLng(item.del_qty)
+                            
+                            
+                            
                             this_psh.Cells(x, 10) = p.pusname
                             this_psh.Cells(x, 11) = p.duns
                             this_psh.Cells(x, 12) = p.supp_nm
@@ -465,6 +490,32 @@ Private Sub pracuj_na_danych()
         ' ------------------------------------------
     End If
 End Sub
+
+Private Sub def_recv_status(ByRef r As Range, mp As pus, lng_recv As Long, lng_qty As Long, long_del_qty As Long)
+    
+    
+    If CLng(lng_recv) = CLng(lng_qty) And CLng(lng_recv) > 0 Then
+                            
+        mp.recv = INLINE_WITH_QTY
+        r = Cow.G_RECV_STR_BOOKED
+        
+    ElseIf CLng(lng_qty) = CLng(long_del_qty) And CLng(lng_qty) > 0 Then
+    
+        mp.recv = IN_TRANSIT
+        r = Cow.G_RECV_STR_INTRANSIT
+    ElseIf CLng(lng_recv) > 0 And CLng(lng_qty) > 0 Then
+    
+        mp.recv = NOT_INLINE_WITH_QTY
+        r = Cow.G_RECV_STR_BOOKED_NOT_INLINE
+    Else
+    
+        mp.recv = RECV_TBD
+        r = Cow.G_RECV_STR_TBD
+    End If
+    
+End Sub
+
+
 
 Private Function takie_same_4_od_konca(s1, s2) As Boolean
     If Right(s1, 4) = Right(s2, 4) Then
@@ -489,58 +540,58 @@ Public Sub take_puses_from_wizard(psh As Worksheet)
     
         If r <> "" Then
         
-            
-            
-            
-            ki = CStr(psh.Cells(r.Row, Cow.O_PUS_Number))
-            If puses.Exists(ki) Then
-                ' tylko dodajemy kolejny pn
-                Set item = Nothing
-                Set item = New PnInPus
+            If (CStr(G_FUP_CODE) = "") Or (CStr(psh.Cells(r.Row, Cow.O_FUP_code)) = CStr(G_FUP_CODE)) Then
                 
-                item.pn = psh.Cells(r.Row, Cow.O_PN)
-                item.qty = psh.Cells(r.Row, Cow.O_Pick_up_Qty)
-                item.del_qty = 0
-                item.recv = 0
-                
-                Set p = puses(ki)
-                p.pns.Add item
-            Else
-                ' nowy pus w ogole
-                
-                
-                Set item = Nothing
-                Set item = New PnInPus
-                
-                item.pn = psh.Cells(r.Row, Cow.O_PN)
-                item.qty = psh.Cells(r.Row, Cow.O_Pick_up_Qty)
-                item.del_qty = 0
-                item.recv = 0
-                
-                
-                Set p = Nothing
-                Set p = New pus
-                
-                With p
-                
-                    .plt = znajdz_plt_w_arkuszu_details(psh.Parent)
-                    .duns = znajdz_duns_w_arkuszu_master(psh.Parent, CStr(item.pn))
-                    .supp_nm = znajdz_supp_nm_w_arkuszu_master(psh.Parent, CStr(item.pn))
-                
-                    .eda = CDate(psh.Cells(r.Row, Cow.O_Delivery_Date))
-                    .pusname = CStr(ki)
-                    .recv = RECV_TBD
+                ki = CStr(psh.Cells(r.Row, Cow.O_PUS_Number))
+                If puses.Exists(ki) Then
+                    ' tylko dodajemy kolejny pn
+                    Set item = Nothing
+                    Set item = New PnInPus
                     
-                    .on_mgo = False
-                    .on_wizard = True
+                    item.pn = psh.Cells(r.Row, Cow.O_PN)
+                    item.qty = psh.Cells(r.Row, Cow.O_Pick_up_Qty)
+                    item.del_qty = 0
+                    item.recv = 0
                     
-                    .fup_code = CStr(psh.Cells(r.Row, Cow.O_FUP_code))
+                    Set p = puses(ki)
+                    p.pns.Add item
+                Else
+                    ' nowy pus w ogole
                     
-                    .sdate = CDate(psh.Cells(r.Row, Cow.O_Pick_up_date))
-                    .pns.Add item
-                End With
-                
-                puses.Add CStr(ki), p
+                    
+                    Set item = Nothing
+                    Set item = New PnInPus
+                    
+                    item.pn = psh.Cells(r.Row, Cow.O_PN)
+                    item.qty = psh.Cells(r.Row, Cow.O_Pick_up_Qty)
+                    item.del_qty = 0
+                    item.recv = 0
+                    
+                    
+                    Set p = Nothing
+                    Set p = New pus
+                    
+                    With p
+                    
+                        .plt = znajdz_plt_w_arkuszu_details(psh.Parent)
+                        .duns = znajdz_duns_w_arkuszu_master(psh.Parent, CStr(item.pn))
+                        .supp_nm = znajdz_supp_nm_w_arkuszu_master(psh.Parent, CStr(item.pn))
+                    
+                        .eda = CDate(psh.Cells(r.Row, Cow.O_Delivery_Date))
+                        .pusname = CStr(ki)
+                        .recv = RECV_TBD
+                        
+                        .on_mgo = False
+                        .on_wizard = True
+                        
+                        .fup_code = CStr(psh.Cells(r.Row, Cow.O_FUP_code))
+                        
+                        .sdate = CDate(psh.Cells(r.Row, Cow.O_Pick_up_date))
+                        .pns.Add item
+                    End With
+                    
+                    puses.Add CStr(ki), p
+                End If
             End If
         End If
         
@@ -630,7 +681,12 @@ Public Sub put_puses_into_this_puses_sh()
             this_psh.Cells(x, 6) = item.qty
             this_psh.Cells(x, 7) = item.del_qty
             this_psh.Cells(x, 8) = item.recv
-            this_psh.Cells(x, 9) = p.recv
+            ' this_psh.Cells(x, 9) = p.recv
+            
+            def_recv_status this_psh.Cells(x, 9), p, CLng(item.recv), CLng(item.qty), CLng(item.del_qty)
+            
+            
+            
             this_psh.Cells(x, 10) = p.pusname
             this_psh.Cells(x, 11) = p.duns
             this_psh.Cells(x, 12) = p.supp_nm

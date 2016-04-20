@@ -7,6 +7,23 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+' FORREST SOFTWARE
+' Copyright (c) 2015 Mateusz Forrest Milewski
+'
+' Permission is hereby granted, free of charge,
+' to any person obtaining a copy of this software and associated documentation files (the "Software"),
+' to deal in the Software without restriction, including without limitation the rights to
+' use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+' and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+'
+' The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+'
+' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+' INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+' FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+' IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+' WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Implements IRqmTaker
 
 
@@ -49,10 +66,18 @@ Private Sub IRqmTaker_pobierzRqmsy(mich As InitConfigHandler, w As Workbook)
         .dodaj_pny_z_arkusza_input
     End With
     
+    
+    
     If pnl.pn_dic.COUNT > 0 Then
     
         ' RQMS downloading section
         ' ==================================================
+        
+        Dim sh As StatusHandler
+        Set sh = New StatusHandler
+        sh.init_statusbar pnl.pn_dic.COUNT
+        sh.show
+        
         Dim f As Range
         wiersz_outputu = 2
         For Each kii In pnl.pn_dic.Keys()
@@ -67,19 +92,18 @@ Private Sub IRqmTaker_pobierzRqmsy(mich As InitConfigHandler, w As Workbook)
             
                 If Not f Is Nothing Then
                     zrob_iteracje_pokolejnych_rqmach wiersz_outputu, f
-                Else
-                    .Cells(wiersz_outputu, Cow.RQMS_PLT) = pnl.plt
-                    .Cells(wiersz_outputu, Cow.RQMS_PN) = ki
-                    .Cells(wiersz_outputu, Cow.RQMS_CW) = ""
-                    .Cells(wiersz_outputu, Cow.RQMS_QTY) = 0
+                    wiersz_outputu = wiersz_outputu + 1
                 End If
             End With
             
             
-            wiersz_outputu = wiersz_outputu + 1
             
+            
+            sh.progress_increase
         Next
         
+        sh.hide
+        Set sh = Nothing
         ' ==================================================
     End If
 
@@ -130,6 +154,9 @@ Private Sub zrob_iteracje_pokolejnych_rqmach(ByRef wo As Variant, ByRef f As Ran
         
         Set ir = ir.Offset(0, 1)
     Loop Until Trim(ir) = ""
+    
+    
+    wo = wo - 1
     
     ' ===================================================================================
 End Sub

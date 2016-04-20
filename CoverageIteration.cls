@@ -7,6 +7,24 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+
+' FORREST SOFTWARE
+' Copyright (c) 2015 Mateusz Forrest Milewski
+'
+' Permission is hereby granted, free of charge,
+' to any person obtaining a copy of this software and associated documentation files (the "Software"),
+' to deal in the Software without restriction, including without limitation the rights to
+' use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+' and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+'
+' The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+'
+' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+' INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+' FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+' IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+' WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Public plt As String
 Public pn As String
 Public cbal As Long
@@ -22,6 +40,122 @@ Public total_pus_qty As Long
 Private slownik_cov_items As Dictionary
 Private i As CoverageItem
 Private j As CoordItem
+
+
+Public Sub wypelnianie_arkusza_cov_rqmsami_i_pusami(ir As Range)
+    
+    Set i = Nothing
+    Dim tmp As Range
+    Set tmp = ir.Parent.Cells(1, ir.Column)
+    
+    Do
+        ki = CStr(tmp)
+        
+        On Error Resume Next
+        Set i = slownik_cov_items(ki)
+        
+        
+        If Not i Is Nothing Then
+            ir = i.rqm
+            ir.Offset(0, 1) = i.pus
+        End If
+    
+        Set ir = ir.Offset(0, 3)
+        Set tmp = tmp.Offset(0, 3)
+    Loop Until Trim(tmp) = ""
+End Sub
+
+
+
+Public Sub sprawdz_weeki(ByRef najwczesniejszy_week As Variant, ByRef najpozniejszy_week As Variant)
+
+
+    ' big side effect
+    ' pobieramy na koniec wartosci na zewnatrz
+    ' dla: najwczesniejszy_week i najpozniejszy_week
+
+    For Each ki In slownik_cov_items.Keys
+        Set i = slownik_cov_items(ki)
+        
+        If CStr(najwczesniejszy_week) = "" Then
+            najwczesniejszy_week = i.ycw
+        End If
+        
+        If CStr(najpozniejszy_week) = "" Then
+            najpozniejszy_week = i.ycw
+        End If
+        
+        
+        najwczesniejszy_week = sprawdz_czy_jest_wczesniejszy(CStr(i.ycw), CStr(najwczesniejszy_week))
+        najpozniejszy_week = sprawdz_czy_jest_pozniejszy(CStr(i.ycw), CStr(najpozniejszy_week))
+    Next
+End Sub
+
+Private Function sprawdz_czy_jest_wczesniejszy(iycw As String, najwczes As String)
+    sprawdz_czy_jest_wczesniejszy = CStr(najwczes)
+    
+    If iycw Like "*Y*CW*" Then
+        If najwczes Like "*Y*CW*" Then
+        
+            ' sekcja sprawdzenia dwoch elementow ycw
+            ' ===============================================
+            
+            
+            
+            If parsuj_y_cws_sprawdz_ktory_wiekszy(iycw, najwczes) = 2 Then
+                sprawdz_czy_jest_wczesniejszy = CStr(iycw)
+            End If
+            ' ===============================================
+        End If
+    End If
+End Function
+
+Private Function sprawdz_czy_jest_pozniejszy(iycw As String, najpoz As String)
+    sprawdz_czy_jest_pozniejszy = CStr(najpoz)
+    
+    If iycw Like "*Y*CW*" Then
+        If najpoz Like "*Y*CW*" Then
+        
+            ' sekcja sprawdzenia dwoch elementow ycw
+            ' ===============================================
+            
+            If parsuj_y_cws_sprawdz_ktory_wiekszy(iycw, najpoz) = 1 Then
+                sprawdz_czy_jest_pozniejszy = CStr(iycw)
+            End If
+            ' ===============================================
+        End If
+    End If
+End Function
+
+Private Function parsuj_y_cws_sprawdz_ktory_wiekszy(ycw1, ycw2)
+    ' wartosc mowi o tym ze pobieramy ycw2
+    ' jesli parsuj_y_cws bedzie rowne 1 to wtedy pobieramy ycw1 ale to jest kod poza ta funkcja
+    parsuj_y_cws_sprawdz_ktory_wiekszy = 0
+    
+    
+    y1 = Mid(ycw1, 2, 4)
+    y2 = Mid(ycw2, 2, 4)
+    
+    cw1 = Right(ycw1, 2)
+    cw2 = Right(ycw2, 2)
+    
+    On Error Resume Next
+    liczba_ycw1 = CLng(y1) * 100 + CLng(cw1)
+    
+    On Error Resume Next
+    liczba_ycw2 = CLng(y2) * 100 + CLng(cw2)
+    
+    If liczba_ycw1 > liczba_ycw2 Then
+        parsuj_y_cws_sprawdz_ktory_wiekszy = 1
+    ElseIf liczba_ycw1 < liczba_ycw2 Then
+        parsuj_y_cws_sprawdz_ktory_wiekszy = 2
+    End If
+End Function
+
+
+Public Function get_cov_items() As Dictionary
+    Set get_cov_items = slownik_cov_items
+End Function
 
 
 Public Function get_total_pus_qty() As Long

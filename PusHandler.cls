@@ -761,23 +761,39 @@ Private Sub dodaj_do_siebie_potential_recvs(o As Worksheet)
     Dim fst As Range
     Dim sec As Range
     Dim rcv As Range
-    Dim prcv As Range
+    Dim pot_rcv As Range
+    Dim recv_status As Range
+    
+    
     
     Set fst = o.Range("A2")
     Set sec = fst.Offset(1, 0)
     
     Do
-        If sec = fst Then
+        If sec & sec.Offset(0, 1) = fst & fst.Offset(0, 1) Then
         
             ' H - recv
             Set rcv = o.Range("H" & sec.Row)
-            Set prcv = o.Range("I" & fst.Row)
+            Set pot_rcv = o.Range("I" & fst.Row)
+            Set recv_status = o.Range("K" & fst.Row)
+            
+            If rcv > 0 And pot_rcv = 0 Then
+                pot_rcv = rcv
+                recv_status = Cow.G_RECV_STR_POT_RECV
+                ' Exit Do
+            End If
+            
             
             
             Set sec = sec.Offset(1, 0)
         End If
         
-    Loop While fst = sec
+        If sec & sec.Offset(0, 1) <> fst & fst.Offset(0, 1) Then
+            Set fst = sec
+            Set sec = fst.Offset(1, 0)
+        End If
+        
+    Loop Until sec = ""
 End Sub
 
 Private Sub wypelnij_cbalami(o As Worksheet, csh As Worksheet)

@@ -173,4 +173,18 @@ Attribute VB_Name = "VersionModule"
 ' ==================================================================================================
 
 
+' ver 1.04 dev 06-08
+' ==================================================================================================
+'
+' odeszlem od pierwotnego zalozenia sprawdzenia recv tbd w szerszy sposob pozniej
+' do razu zmodyfikowalem kod dla samego arkusza PUSes
+' jedyne co zostalo do zaimplementowania to dodatnie pot recv dla arkusz PUS match
+' same CBALE wsadzone sa juz poprawnie.
+'
+' powinny byc dwie petle a dalem jedna: jestem z siebie dumny (implementacja w PusHandler):
+' Private Sub dodaj_do_siebie_potential_recvs(o As Worksheet)
+'
+' ==================================================================================================
+
+
 ' -----------------------------------------------------------------------------------------------------------------

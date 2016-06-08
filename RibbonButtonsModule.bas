@@ -78,8 +78,9 @@ Public Sub run_cow(ictrl As IRibbonControl)
         
         ' sekcja stocku
         ' ====================================
-        .OptionButtonBalanceFromCBAL.Value = False
-        .OptionButtonBalanceFromTotalMRDQty.Value = False
+        '.OptionButtonBalanceFromCBAL.Value = False
+        '.OptionButtonBalanceFromTotalMRDQty.Value = False
+        .OptionButtonBalanceOnZero.Value = False
         
         ' ====================================
         

@@ -218,7 +218,11 @@ Private Sub add_recv()
                                                 czy_znalazlem_pn = True
                                                 If IsNumeric(.qty(Int(x))) Then
                                                 
-                                                    i.recv = CLng(.qty(Int(x)))
+                                                    ' no bardzo wazny element pozbywajacy sie przecinka dla wartosci
+                                                    ' wiekszych niz 1k
+                                                    i.recv = CLng(Replace(CStr(.qty(Int(x))), ",", ""))
+                                                    
+                                                    
                                                     If CLng(.qty(Int(x))) = 0 Then
                                                         p.recv = ON_ZERO
                                                     ElseIf CLng(i.recv) = CLng(i.qty) Then
@@ -242,7 +246,8 @@ Private Sub add_recv()
                                             
                                             If IsNumeric(.qty(Int(x))) Then
                                             
-                                                i.recv = CLng(.qty(Int(x)))
+                                                i.recv = CLng(Replace(CStr(.qty(Int(x))), ",", ""))
+                                                
                                                 If CLng(.qty(Int(x))) = 0 Then
                                                     p.recv = ON_ZERO
                                                 ElseIf CLng(i.recv) = CLng(i.qty) Then
@@ -265,7 +270,7 @@ Private Sub add_recv()
                                         Set i = New PnInPus
                                         
                                         i.pn = m.pMS9PH100.pn
-                                        i.recv = CLng(.qty(Int(x)))
+                                        i.recv = CLng(Replace(CStr(.qty(Int(x))), ",", ""))
                                         
                                         
                                         Set p = Nothing

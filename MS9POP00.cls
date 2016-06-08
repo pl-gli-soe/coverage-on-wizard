@@ -188,8 +188,8 @@ Public Property Get qhd() As String
     qhd = Trim(sess0.screen.getString(5, 48, 7))
 End Property
 
-Public Property Get O() As String
-    O = Trim(sess0.screen.getString(15, 4, 25))
+Public Property Get o() As String
+    o = Trim(sess0.screen.getString(15, 4, 25))
 End Property
 
 Public Property Get f() As String

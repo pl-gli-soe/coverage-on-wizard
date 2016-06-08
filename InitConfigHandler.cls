@@ -68,6 +68,7 @@ Public addRecv As Boolean
 
 Public cbalFlatTable As Boolean
 
+Public matchPUS As Boolean
 
 Public do_we_want_to_run_coverage As Boolean
 Public do_we_want_to_run_coord_list As Boolean

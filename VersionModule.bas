@@ -134,5 +134,43 @@ Attribute VB_Name = "VersionModule"
 '
 ' ==================================================================================================
 
+' ver 1.01 21-04
+' ==================================================================================================
+'
+' nowe kolory palety baku
+'
+'
+' ==================================================================================================
+
+
+' ver 1.02 21-04
+' ==================================================================================================
+'
+' fix na kolorowaniu asnow / pusow
+'
+'
+' ==================================================================================================
+
+' ver 1.03 dev 06-06
+' ==================================================================================================
+'
+' dodatkowe fixy na cov - dodatkowe kolumny
+' plus moze jeszcze uproszczenie formularza.
+' dodanie kolumn CBAL I POTENCIAL RECV
+'
+' blad na generowaniu coverage - fixed
+' okazalo sie ze na jednym z obiektow nie wyczysciclem set o = Nothing
+' normlanie nie musialbym tego robic jednak z powodu wstawienia on error
+' gdy nie bylo danych ignorowal przypisanie powodujac maly bigos
+'
+' praca nad pus matchem w pierwszej fazie nie poszla za dobrze z powodu podwojnej petli do
+' przez co makro zwieszalo sie podczas swojej pracy
+' kod i tak nie zostal zapisany, zatem moge zaczac jeszcze raz
+' przy okazji na kibelku postanowilem ze wroce rowniez do pierwotnej implementacji czystego arkusza PUSes
+' i juz tam rozbije RECV TBD
+'
+'
+' ==================================================================================================
+
 
 ' -----------------------------------------------------------------------------------------------------------------

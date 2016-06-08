@@ -323,7 +323,7 @@ End Function
 ' 2.
 Public Sub merge_puses_into_this_puses_sh()
 
-Set this_psh = ThisWorkbook.Sheets(Cow.PUSES_SH_NM)
+    Set this_psh = ThisWorkbook.Sheets(Cow.PUSES_SH_NM)
     
     ' no i tak lecimy caly arkusz i porownanie na pelnej
     ' MATCHING SECTION FOR PUSes sheet
@@ -399,7 +399,10 @@ Private Sub pracuj_na_danych()
                         Do
                             Dim r As Range
                             Set r = this_psh.Cells(x, 1)
-                    
+                            
+                            
+                            ' part numbery sa posrotwane wiec swobodnie w pierwszej kolejnosci sprawdzamy
+                            ' czy dalej jestesmy w jednym worku
                             If CStr(item.pn) = CStr(this_psh.Cells(x, Cow.PUSES_PN)) Then
                             
                                 'from_cell = Replace(CStr(this_psh.Cells(x, Cow.PUSES_PUS_NAME)), "0", "")
@@ -408,6 +411,8 @@ Private Sub pracuj_na_danych()
                                 
                                 from_cell = CStr(this_psh.Cells(x, Cow.PUSES_PUS_NAME))
                                 from_pus_name_from_object = CStr(p.pusname)
+                                
+                                ' tutaj bardzo restrykcyjnie sprawdzmy czy nazwy pusow sa identyczne
                                 If from_pus_name_from_object = from_cell Then
                                 
                                 
@@ -494,7 +499,12 @@ End Sub
 Private Sub def_recv_status(ByRef r As Range, mp As pus, lng_recv As Long, lng_qty As Long, long_del_qty As Long)
     
     
-    If CLng(lng_recv) = CLng(lng_qty) And CLng(lng_recv) > 0 Then
+    
+    If CDate(mp.sdate) > CDate(Now) Then
+        mp.recv = PU_DATE_IN_FUTURE
+        r = Cow.G_RECV_STR_PU_DATE_IN_FUTURE
+    
+    ElseIf CLng(lng_recv) = CLng(lng_qty) And CLng(lng_recv) > 0 Then
                             
         mp.recv = INLINE_WITH_QTY
         r = Cow.G_RECV_STR_BOOKED
@@ -507,6 +517,20 @@ Private Sub def_recv_status(ByRef r As Range, mp As pus, lng_recv As Long, lng_q
     
         mp.recv = NOT_INLINE_WITH_QTY
         r = Cow.G_RECV_STR_BOOKED_NOT_INLINE
+        
+    ElseIf (CStr(mp.pusname) Like "*PTA*") Or (Not (CStr(mp.pusname) Like "*FMA*")) Then
+        mp.recv = PTA
+        r = Cow.G_RECV_STR_PTA
+    
+    ElseIf CLng(lng_recv) < 0 Then
+    
+        mp.recv = NEGATIVE_RECV
+        r = Cow.G_RECV_STR_NEGATIVE_RECV
+        
+    ElseIf CStr(r.Offset(0, 1)) <> CStr(mp.pusname) Then
+        
+        mp.recv = ASN_MISSING
+        r = Cow.G_RECV_STR_ASN_MISSING
     Else
     
         mp.recv = RECV_TBD
@@ -683,7 +707,7 @@ Public Sub put_puses_into_this_puses_sh()
             this_psh.Cells(x, 8) = item.recv
             ' this_psh.Cells(x, 9) = p.recv
             
-            def_recv_status this_psh.Cells(x, 9), p, CLng(item.recv), CLng(item.qty), CLng(item.del_qty)
+            def_recv_status this_psh.Cells(x, Cow.RECV_STATUS_COLUMN), p, CLng(item.recv), CLng(item.qty), CLng(item.del_qty)
             
             
             
@@ -716,4 +740,103 @@ End Sub
 
 Private Sub Class_Terminate()
     Set puses = Nothing
+End Sub
+
+
+Public Sub pus_match_report_generator(o As Worksheet, csh As Worksheet)
+    
+    
+    przesun_o_cbal_i_o_pot_recv o
+    
+    'o.Range("I1") = "POT RECV"
+    'o.Range("J1") = "CBAL"
+    
+    wypelnij_cbalami o, csh
+    dodaj_do_siebie_potential_recvs o
+    
+End Sub
+
+Private Sub dodaj_do_siebie_potential_recvs(o As Worksheet)
+
+    Dim fst As Range
+    Dim sec As Range
+    Dim rcv As Range
+    Dim prcv As Range
+    
+    Set fst = o.Range("A2")
+    Set sec = fst.Offset(1, 0)
+    
+    Do
+        If sec = fst Then
+        
+            ' H - recv
+            Set rcv = o.Range("H" & sec.Row)
+            Set prcv = o.Range("I" & fst.Row)
+            
+            
+            Set sec = sec.Offset(1, 0)
+        End If
+        
+    Loop While fst = sec
+End Sub
+
+Private Sub wypelnij_cbalami(o As Worksheet, csh As Worksheet)
+
+    Dim r As Range, cbal_row As Range
+    ' zaczynamy od pierwszej wartosci w arkuszu pus match
+    Set r = o.Range("A2")
+    
+    
+    Do
+        ' body
+        ' ==========================================
+        ''
+        '
+        ' 9 offset of pn do cbal dla arkusza pus match
+        Set cbal_row = r.Offset(0, 9)
+        cbal_row = CLng(znajdz_wart_cbala_dla(r, csh))
+        '
+        ''
+        ' ==========================================
+    
+        Set r = r.Offset(1, 0)
+    Loop Until Trim(CStr(r)) = ""
+End Sub
+
+Private Function znajdz_wart_cbala_dla(ByRef r As Range, ByRef c As Worksheet) As Long
+    znajdz_wart_cbala_dla = 0
+    
+    pltpn = CStr(r) & CStr(r.Offset(0, 1))
+    
+    Dim rrr As Range
+    ' arkusz cbal
+    Set rrr = c.Range("A2")
+    Do
+        If CStr(pltpn) = CStr(Trim(rrr)) & CStr(Trim(rrr.Offset(0, 1))) Then
+            
+            If IsNumeric(rrr.Offset(0, 2)) Then
+                znajdz_wart_cbala_dla = CLng(rrr.Offset(0, 2))
+                Exit Function
+            End If
+        End If
+        Set rrr = rrr.Offset(1, 0)
+    Loop Until Trim(rrr) = ""
+End Function
+
+Private Sub przesun_o_cbal_i_o_pot_recv(ByRef o As Worksheet)
+    
+    If Trim(o.Range("a2")) <> "" Then
+        lr = o.Range("a1").End(xlDown).Row
+    Else
+        lr = 2
+    End If
+    
+    Dim rng As Range
+    Set rng = o.Range("I1:O" & CStr(lr))
+    rng.Copy rng.Offset(0, 2)
+    
+    o.Columns("I:J").Clear
+    
+    o.Range("I1") = "POT RECV"
+    o.Range("J1") = "CBAL"
 End Sub

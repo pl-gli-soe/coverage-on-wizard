@@ -63,6 +63,10 @@ Private Sub run()
         create_cbal_flat_table
     End If
     
+    If mich.matchPUS Then
+        create_pus_match_list
+    End If
+    
     If mich.do_we_want_to_run_coverage Then
         create_coverage
     End If
@@ -70,6 +74,31 @@ Private Sub run()
     If mich.do_we_want_to_run_coord_list Then
         create_coord_list
     End If
+    
+    
+End Sub
+
+Private Sub create_pus_match_list()
+    
+    Dim o As Worksheet
+    Dim i As Worksheet
+    Dim c As Worksheet
+    
+    
+    Set c = ThisWorkbook.Sheets(Cow.CBALS_SH_NM)
+    Set i = ThisWorkbook.Sheets(PUSES_SH_NM)
+    i.Copy ThisWorkbook.Sheets(PUSES_SH_NM)
+    Set o = ActiveSheet
+    On Error Resume Next
+    o.Name = "pus match " & o.Name
+    
+    Set ph = New PusHandler
+    
+    With ph
+        .pus_match_report_generator o, c
+    End With
+    Set ph = Nothing
+    
 End Sub
 
 

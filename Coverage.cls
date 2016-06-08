@@ -110,7 +110,7 @@ Private Sub pobierz_cbale()
                 ci.pn = CStr(r.Offset(0, 1))
                 ci.cbal = CLng(r.Offset(0, Cow.CBAL_CBAL - 1))
                 ci.del_conf = CStr(r.Offset(0, Cow.CBAL_DEL_CONF - 1))
-                ci.duns = CStr(r.Offset(O, Cow.CBAL_DUNS - 1))
+                ci.duns = CStr(r.Offset(o, Cow.CBAL_DUNS - 1))
                 ci.resp = CStr(r.Offset(0, Cow.CBAL_RESP - 1))
                 ci.fup_code = CStr(r.Offset(0, Cow.CBAL_FUP_CODE - 1))
                 ci.supp_nm = CStr(r.Offset(0, Cow.CBAL_SUPP_NM - 1))
@@ -174,6 +174,8 @@ Private Sub pobierz_pusy()
             ' indx = PLT & PN
             indx = CStr(r) & CStr(r.Offset(0, 1))
             If slownik.Exists(CStr(indx)) Then
+            
+                ' Debug.Assert CStr(indx) <> "ZA3636660"
                 
                 ' -----------------------------------------------------------------------------------------
                 
@@ -183,6 +185,7 @@ Private Sub pobierz_pusy()
                 ' -----------------------------------------------------------------------------------------
             End If
         End If
+        
         Set r = r.Offset(1, 0)
     Loop Until Trim(r) = ""
     
@@ -272,6 +275,8 @@ Private Sub no_to_na_wielki_final_ebale(e As E_STOCK_FROM_WHERE)
             r.FormulaR1C1 = "=RC[-3] - RC[-2] + RC[-1]"
         ElseIf e = E_STOCK_FROM_TOTAL_MRD_QTY Then
             r.FormulaR1C1 = "=RC[-4] - RC[-2] + RC[-1]"
+        ElseIf e = E_STOCK_ON_ZERO Then
+            r.FormulaR1C1 = "=-RC[-2] + RC[-1]"
         End If
         
         
@@ -319,6 +324,9 @@ End Sub
 
 Private Sub rysuj_labelki(w1 As String, w2 As String, ir As Range)
 
+
+    Dim t As TheLayout
+    Set t = New TheLayout
     
     i = 0
     w = w1
@@ -328,6 +336,16 @@ Private Sub rysuj_labelki(w1 As String, w2 As String, ir As Range)
         ir.Offset(0, i * 3) = "RQM"
         ir.Offset(0, i * 3 + 1) = "IT"
         ir.Offset(0, i * 3 + 2) = "EBAL"
+        
+        
+        ' ir.Parent.Range(ir.Offset(-1, i * 3), ir.Offset(-1, i * 3 + 2)).Merge = True
+        t.backColor ir.Offset(-1, i * 3), Cow.G_LIGHT_GREY
+        t.backColor ir.Offset(-1, i * 3 + 1), Cow.G_LIGHT_GREY
+        t.backColor ir.Offset(-1, i * 3 + 2), Cow.G_LIGHT_GREY
+        t.backColor ir.Offset(0, i * 3), Cow.G_LIGHT_GREY
+        t.backColor ir.Offset(0, i * 3 + 1), Cow.G_LIGHT_GREY
+        t.backColor ir.Offset(0, i * 3 + 2), Cow.G_BLACK_COLOR
+        
         w = inkrementuj_o_jeden_week(CStr(w))
         i = i + 1
         
@@ -377,11 +395,17 @@ End Function
 Private Sub koloruj()
 
     
-    koloruj_labelki
-    minusy
-    znajdz_del_conf_dla_linii
-    grid_na_cale
     ramki_na_ebale_plus_boldy_na_wybranych_kolumnach
+    minusy
+    
+    grid_na_cale
+    koloruj_labelki
+    remove_std_gridlines
+    
+    znajdz_del_conf_dla_linii
+    zaznacz_pusy
+    
+    
 End Sub
 
 
@@ -410,7 +434,9 @@ Private Sub koloruj_labelki()
     'l.fillSolidGridLines r, RGB(0, 0, 250)
     
     Set r = covsh.Range(covsh.Cells(2, 1), covsh.Cells(2, lc))
-    l.fillSolidGridLines r, RGB(0, 0, 0)
+    l.fillSolidGridLines r, Cow.G_BLACK_COLOR
+    l.backColor r, Cow.G_BLACK_COLOR
+    r.Font.Color = Cow.G_PINK_COLOR
 
 End Sub
 
@@ -453,7 +479,8 @@ Private Sub znajdz_del_conf_dla_linii()
         Do
             If CStr(r) = CStr(rqm.Parent.Cells(1, rqm.Column)) Then
                 Set tmp = rqm.Parent.Range(rqm, rqm.Offset(0, 2))
-                l.backColor tmp, RGB(0, 160, 100)
+                l.backColor tmp, Cow.G_PURPLE_COLOR
+                tmp.Font.Color = Cow.G_LIGHT_GREY
                 Exit Do
             End If
             
@@ -490,9 +517,60 @@ Private Sub ramki_na_ebale_plus_boldy_na_wybranych_kolumnach()
         If r = "EBAL" Then
             t.fillSolidGridLines covsh.Range(covsh.Cells(2, r.Column), covsh.Cells(lr, r.Column)), RGB(10, 40, 10)
             covsh.Range(covsh.Cells(2, r.Column), covsh.Cells(lr, r.Column)).Font.Bold = True
+            
         ElseIf r = "DEL CONF" Or r = "PLT" Or r = "PN" Then
+        
             covsh.Range(covsh.Cells(2, r.Column), covsh.Cells(lr, r.Column)).Font.Bold = True
         End If
+        
+        t.backColor covsh.Range(covsh.Cells(2, r.Column), covsh.Cells(lr, r.Column)), Cow.G_LIGHT_GREY
+        
+        Set r = r.Offset(0, 1)
+    Loop Until Trim(r) = ""
+End Sub
+
+Public Sub zaznacz_pusy()
+
+    ' Set r = covsh.Cells(3, Cow.COV_CBAL + 1)
+    Set r = covsh.Range("A2")
+    
+    If Trim(r.Offset(1, 0)) <> "" Then
+        lr = r.End(xlDown).Row
+    Else
+        lr = 3
+    End If
+    
+    
+    If Trim(r.Offset(0, 1)) <> "" Then
+        lc = r.End(xlToRight).Column
+    Else
+        lc = 2
+    End If
+    
+    Dim t As TheLayout
+    Set t = New TheLayout
+    
+    Do
+        If r = "IT" Then
+            't.fillSolidGridLines covsh.Range(covsh.Cells(2, r.Column), covsh.Cells(lr, r.Column)), RGB(10, 40, 10)
+            'covsh.Range(covsh.Cells(2, r.Column), covsh.Cells(lr, r.Column)).Font.Bold = True
+            
+            Dim tmp As Range
+            Set tmp = r.Offset(1, 0)
+            Do
+                If IsNumeric(tmp) Then
+                    If tmp <> 0 Then
+                        t.backColor tmp, Cow.G_BLACK_COLOR
+                        t.fillSolidFrame tmp, Cow.G_BLACK_COLOR
+                        tmp.Font.Color = Cow.G_LIGHT_GREY
+                        tmp.Font.Bold = True
+                    End If
+                End If
+                Set tmp = tmp.Offset(1, 0)
+            Loop Until tmp.Row = lr + 1
+        End If
+        
+        
         Set r = r.Offset(0, 1)
     Loop Until Trim(r) = ""
 End Sub
@@ -527,4 +605,9 @@ Private Sub simpleAutoFit()
         
         .Columns("B:J").AutoFit
     End With
+End Sub
+
+
+Private Sub remove_std_gridlines()
+    ActiveWindow.DisplayGridlines = False
 End Sub

@@ -17,7 +17,7 @@ Attribute VB_Name = "GlobalModule"
 ' WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Global Const CURRENT_VERSION = "0.9"
+Global Const CURRENT_VERSION = "1.03"
 
 
 'Public Enum E_RECV_TYPE
@@ -35,6 +35,14 @@ Global Const G_RECV_STR_ON_ZERO = "RECV NA ZERO"
 Global Const G_RECV_STR_BOOKED = "BOOKED"
 Global Const G_RECV_STR_BOOKED_NOT_INLINE = "BOOKED BUT NOT WITH SAME QTY"
 Global Const G_RECV_STR_INTRANSIT = "IN TRANSIT"
+Global Const G_RECV_STR_ASN_MISSING = "ASN MISSING"
+Global Const G_RECV_STR_PU_DATE_IN_FUTURE = "PU DATE IN FUTURE"
+Global Const G_RECV_STR_PTA = "PTA"
+Global Const G_RECV_STR_MATCH_ON_NAME = "MATCH ON NAME"
+Global Const G_RECV_STR_NEGATIVE_RECV = "NEGATIVE RECV"
+
+
+Global Const RECV_STATUS_COLUMN = 9
 
 ' =====================================================================
 ' =====================================================================
@@ -61,11 +69,17 @@ Global Const ILE_DNI = 50
 
 ' this workbook const sheets
 ' ==========================================
+
+
+' ==========================================
 Global Const PUSES_SH_NM = "PUSes"
 Global Const RQMS_SH_NM = "RQMs"
 Global Const CBALS_SH_NM = "CBALs"
 Global Const INPUT_SH_NM = "INPUT"
 ' ==========================================
+
+
+
 
 
 Global Const LAST_ROW_IN_SH = 1048576

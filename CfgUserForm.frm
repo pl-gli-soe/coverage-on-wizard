@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} CfgUserForm 
    Caption         =   "Init Config Form"
-   ClientHeight    =   6540
+   ClientHeight    =   7155
    ClientLeft      =   45
    ClientTop       =   375
-   ClientWidth     =   7785
+   ClientWidth     =   6930
    OleObjectBlob   =   "CfgUserForm.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -46,11 +46,15 @@ Private Sub BtnSubmit_Click()
     ' ich.cbalFromWhere = E_CBAL_FROM_MGO
     
     
-    If Me.OptionButtonBalanceFromCBAL.Value = True Then
-        ich.coverageStockBasedOnQuestion = E_STOCK_FROM_CBAL
-    ElseIf Me.OptionButtonBalanceFromTotalMRDQty.Value = True Then
-        ich.coverageStockBasedOnQuestion = E_STOCK_FROM_TOTAL_MRD_QTY
-    End If
+    'If Me.OptionButtonBalanceFromCBAL.Value = True Then
+    '    ich.coverageStockBasedOnQuestion = E_STOCK_FROM_CBAL
+    'ElseIf Me.OptionButtonBalanceFromTotalMRDQty.Value = True Then
+    '    ich.coverageStockBasedOnQuestion = E_STOCK_FROM_TOTAL_MRD_QTY
+    'ElseIf Me.OptionButtonBalanceOnZero = True Then
+    '    ich.coverageStockBasedOnQuestion = E_STOCK_ON_ZERO
+    'End If
+    
+    ich.coverageStockBasedOnQuestion = E_STOCK_ON_ZERO
     
     If Me.OptionButtonPUSMIXED.Value = True Then
         ich.pusFromWhere = E_PUS_MIX
@@ -66,6 +70,8 @@ Private Sub BtnSubmit_Click()
     ich.rqmFlatTable = Me.CheckBoxRQMs.Value
     
     ich.addRecv = Me.CheckBoxRECV.Value
+    
+    ich.matchPUS = Me.CheckBoxPUSMatch.Value
     
     
     If Me.OptionButtonCbalFromWizard.Value = True Then

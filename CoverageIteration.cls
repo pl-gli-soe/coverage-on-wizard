@@ -48,8 +48,15 @@ Public Sub wypelnianie_arkusza_cov_rqmsami_i_pusami(ir As Range)
     Dim tmp As Range
     Set tmp = ir.Parent.Cells(1, ir.Column)
     
+    'plt = ir.Parent.Cells(ir.Row, 1)
+    'pn = ir.Parent.Cells(ir.Row, 2)
+    
     Do
+        ' ki = CStr(plt) & CStr(pn) & CStr(tmp)
         ki = CStr(tmp)
+        
+        
+        Set i = Nothing
         
         On Error Resume Next
         Set i = slownik_cov_items(ki)
@@ -224,6 +231,8 @@ Public Sub dodaj_lub_zmien_pus_elementu_do_slownika_itemow(date_r As Range, r As
     cwkey = "Y" & CStr(Year(CDate(date_r))) & "CW"
     cw = CStr(Application.WorksheetFunction.IsoWeekNum(CDbl(CDate(date_r))))
     
+    ' Debug.Assert cw <> "24"
+    
     If Len(cw) = 1 Then
         cwkey = cwkey & "0" & cw
     ElseIf Len(cw) = 2 Then
@@ -234,6 +243,8 @@ Public Sub dodaj_lub_zmien_pus_elementu_do_slownika_itemow(date_r As Range, r As
     End If
     
     If cwkey Like "Y*CW*" Then
+    
+        
     
         Dim tmp As Long
         Dim scope_ref As Range
@@ -262,6 +273,9 @@ Public Sub dodaj_lub_zmien_pus_elementu_do_slownika_itemow(date_r As Range, r As
         End If
         
         If czy_przegladamy_te_linie Then
+        
+        
+            tmp = CLng(r.Offset(0, Cow.PUSES_QTY - Cow.PUSES_PLT))
     
             If slownik_cov_items.Exists(cwkey) Then
                 
@@ -273,6 +287,11 @@ Public Sub dodaj_lub_zmien_pus_elementu_do_slownika_itemow(date_r As Range, r As
                 i.ycw = CStr(cwkey)
                 i.pus = CLng(tmp)
                 
+                'plt = r
+                'pn = r.Offset(0, 1)
+                
+                
+                ' slownik_cov_items.Add plt & pn & cwkey, i
                 slownik_cov_items.Add cwkey, i
                 
                 

@@ -28,6 +28,7 @@ Public Enum E_COVERAGE_COMMON_DATA
     COV_RESP
     COV_FUP_CODE
     COV_DEL_CONF
+    COV_FIRST_RUNOUT
     COV_TOTAL_MRD_QTY
     COV_CBAL
 End Enum
@@ -117,10 +118,15 @@ Public Enum E_RECV_TYPE
     INLINE_WITH_QTY = 2
     NOT_INLINE_WITH_QTY = 3
     IN_TRANSIT = 4
+    ASN_MISSING = 5
+    PTA = 6
+    PU_DATE_IN_FUTURE = 7
+    NEGATIVE_RECV = 8
 End Enum
 ' ---------------------
 
 Public Enum E_STOCK_FROM_WHERE
+    E_STOCK_ON_ZERO
     E_STOCK_FROM_CBAL
     E_STOCK_FROM_TOTAL_MRD_QTY
 End Enum

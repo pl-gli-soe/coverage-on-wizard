@@ -80,7 +80,7 @@ Public Sub run_cow(ictrl As IRibbonControl)
         ' ====================================
         '.OptionButtonBalanceFromCBAL.Value = False
         '.OptionButtonBalanceFromTotalMRDQty.Value = False
-        .OptionButtonBalanceOnZero.Value = False
+        .OptionButtonBalanceOnZero.Value = True
         
         ' ====================================
         

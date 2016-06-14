@@ -187,4 +187,19 @@ Attribute VB_Name = "VersionModule"
 ' ==================================================================================================
 
 
+' ver 1.05 dev 2016-06-14
+' ==================================================================================================
+'
+' kolejny temat z coveragem - jednak fajnie  by bylo zeby potrafil zrobic jakas interakcje z zaciagnietym CBALem
+' trzeba by ino rozpatrzec jakies rozsadne przeliczenie i skupic sie na current CW.
+'
+' aktualna opcja polega na patrzeniu na cala faze
+' czy moze skrocic obraz do faktycznego ukladu coverage z pierwszym zrzutem dla current CW.
+'
+' ' dobra dobra - powyzej byly rozwazania, czyny ponizej:
+' pierwsza opcja to podkreslanie na inny kolor w current week ebali ktore nie jest zbyt rowne z cbalem sciagnietym
+'
+' ==================================================================================================
+
+
 ' -----------------------------------------------------------------------------------------------------------------

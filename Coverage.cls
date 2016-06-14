@@ -64,8 +64,149 @@ Private Sub ICoverage_makeCoverage(ich As InitConfigHandler)
     przygotuj_coverage_na_postawie_pobranych_danych
     koloruj
     dodaj_first_runout
-    simpleAutoFit
+    simpleAutoFitAndSizeAdjustment
+    pokoloruj_raport_porownujac_cbal_mrd_tot_qty_oraz_ebal_z_curr_cw
 End Sub
+
+
+Private Sub pokoloruj_raport_porownujac_cbal_mrd_tot_qty_oraz_ebal_z_curr_cw()
+    With covsh
+    
+        Dim rrr As Range
+        Set rrr = .Range("A3")
+        Do
+            If Trim(rrr) <> "" Then
+                
+                ' sekcja pracy na jednym wierszu
+                ' ======================================================
+                ''
+                '
+                
+                ' to jest enum pod pierwsze kolumny commmon
+                ' E_COVERAGE_COMMON_DATA
+                    'COV_PLT = 1
+                    'COV_PN
+                    'COV_DUNS
+                    'COV_SUPP_NM
+                    'COV_RESP
+                    'COV_FUP_CODE
+                    'COV_DEL_CONF
+                    'COV_FIRST_RUNOUT
+                    'COV_TOTAL_MRD_QTY
+                    'COV_CBAL
+                    
+                ' to jest enum kolejnych rqm it ebal
+                ' E_COV_RQM_PUS_EBAL
+                '
+                    'COV_RQM = 1
+                    'COV_PUS = 2
+                    'COV_EBAL = 3
+                    
+                
+                ' pierwsza regula sprawdzajaca, czy cbal jest wiekszy niz total mrd qty
+                ' GREEN
+                If rrr.Offset(0, Cow.COV_CBAL - Cow.COV_PLT) > rrr.Offset(0, Cow.COV_TOTAL_MRD_QTY - Cow.COV_PLT) Then
+                
+                    ' sekcja zielona poniewaz na stoku mamy duzo wiecej niz jest potrzebne na MRD
+                    ' ------------------------------------------------------------------------------
+                    rrr.Interior.Color = RGB(10, 200, 20)
+                    rrr.Font.Color = RGB(0, 0, 0)
+                    ' ------------------------------------------------------------------------------
+                
+                ' YELLOW
+                ElseIf rrr.Offset(0, Cow.COV_CBAL - Cow.COV_PLT) < rrr.Offset(0, Cow.COV_TOTAL_MRD_QTY - Cow.COV_PLT) Then
+                
+                    ' narazie na stoku mamy mniej niz oczekuje od tego mrd - grzebiemy dalej dlaczego co i jak
+                    ' ------------------------------------------------------------------------------
+                    rrr.Interior.Color = RGB(240, 240, 0)
+                    rrr.Font.Color = RGB(0, 0, 0)
+                    
+                    ' kolejna logika - tym razem sprawdzamy z current EBAl (dla aktualnego CW)
+                    curr_cw = Application.WorksheetFunction.IsoWeekNum(CDbl(Date))
+                    y = Year(Date)
+                    
+                    str_ycw = "Y" & CStr(y) & "CW" & CStr(str_cw(curr_cw))
+                    
+                    ' no i teraz przeszukujemy kolejne stringi na samej gorze
+                    Dim lbl As Range
+                    Set lbl = .Range("k1")
+                    wartosc_ebal_dla_curr_cw = "tbd"
+                    Do
+                        If Trim(CStr(lbl)) = Trim(CStr(str_ycw)) Then
+                            wartosc_ebal_dla_curr_cw = CStr(.Cells(rrr.Row, lbl.Column + 2))
+                            Exit Do
+                        End If
+                        Set lbl = lbl.Offset(0, 3)
+                    Loop Until Trim(lbl) = ""
+                    
+                    If wartosc_ebal_dla_curr_cw <> "tbd" Then
+                        
+                        ' sekcja sprawdzania wartosci ebalu z curr cw z cbalem
+                        ' --------------------------------------------------------
+                        na_liczbe = CLng(wartosc_ebal_dla_curr_cw)
+                        
+                        
+                        If CLng(rrr.Offset(0, Cow.COV_CBAL - Cow.COV_PLT)) > CLng(na_liczbe) Then
+                        
+                            rrr.Interior.Color = RGB(240, 240, 100)
+                            rrr.Font.Color = RGB(0, 0, 0)
+                        
+                        ElseIf CLng(rrr.Offset(0, Cow.COV_CBAL - Cow.COV_PLT)) < CLng(na_liczbe) Then
+                            
+                            ' chyba jest jakis scrap
+                            rrr.Interior.Color = RGB(240, 0, 10)
+                            rrr.Font.Color = RGB(0, 0, 0)
+                            
+                        Else ' jest rowne
+                            
+                            ' oznacza ze wlasnie w tym tygodniu mamy wyrownanie do cbala
+                            ' ale chyba nie jest to mozliwe zeby ten warunek kiedy kolwiek sie pojawil
+                            
+                            'rrr.Interior.Color = RGB(240, 0, 10)
+                            'rrr.Font.Color = RGB(0, 0, 0)
+                            rrr.Interior.Color = RGB(250, 200, 0)
+                            rrr.Font.Color = RGB(0, 0, 0)
+                        End If
+                        ' --------------------------------------------------------
+                    Else
+                        MsgBox "krytyczny blad dopasowania - aplikacja zarzymala sie"
+                        End
+                    End If
+                    ' ------------------------------------------------------------------------------
+                Else ' to znaczy ze jest rowne i w sumie tez powinno byc na zielono
+                    ' ------------------------------------------------------------------------------
+                    'rrr.Interior.Color = RGB(255, 255, 255)
+                    'rrr.Font.Color = RGB(0, 0, 0)
+                    
+                    ' zrobimy blady zielony
+                    rrr.Interior.Color = RGB(120, 240, 120)
+                    rrr.Font.Color = RGB(0, 0, 0)
+                    ' ------------------------------------------------------------------------------
+                End If
+                    
+                    
+
+
+            End If
+        
+            Set rrr = rrr.Offset(1, 0)
+        Loop Until Trim(rrr) = ""
+    End With
+End Sub
+
+Private Function str_cw(curr_cw) As String
+    
+    tmp_str = CStr(curr_cw)
+    
+    If Len(tmp_str) = 1 Then
+        str_cw = "0" & CStr(tmp_str)
+    ElseIf Len(tmp_str) = 2 Then
+        str_cw = CStr(tmp_str)
+    Else
+        MsgBox "format cw tragicznie zly - aplikacja zatrzymala sie!"
+        End
+    End If
+End Function
 
 Private Sub dodaj_first_runout()
     Set r = covsh.Range("H3")
@@ -599,13 +740,34 @@ Private Sub grid_na_cale()
 End Sub
 
 
-Private Sub simpleAutoFit()
+Private Sub simpleAutoFitAndSizeAdjustment()
+
+    Dim the_layout As TheLayout
+    Set the_layout = New TheLayout
+    
+    the_layout.initLayout
 
     With covsh
         
         .Columns("B:J").AutoFit
+        .Rows(1).RowHeight = 80
+        
+        Dim rrr As Range
+        Set rrr = prepare_range(.Range("K2"))
+        the_layout.changeTxtOrientation rrr, 90
+        
+        .Columns("K:ZZ").AutoFit
     End With
+    
+    
+    Set the_layout = Nothing
 End Sub
+
+Private Function prepare_range(ir As Range) As Range
+    Set prepare_range = ir.Parent.Range(ir.Offset(-1, 0), ir.End(xlToRight).Offset(-1, -2))
+    
+    
+End Function
 
 
 Private Sub remove_std_gridlines()

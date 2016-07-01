@@ -199,9 +199,9 @@ Private Sub add_recv()
                     
                     ' I4017: PART NOT FOUND
                     If m.getCode("ms9ph100") <> "I4017" Then
-                        
+                        y = 0
                         Do
-                            For x = 0 To 9
+                            For x = y To 9
                                 ' Debug.Print ph.get_puses().COUNT
                                 If .DTYP(Int(x)) = "RECV" Then
                                     If ph.get_puses().Exists(Trim(CStr(.SID(Int(x))))) Then
@@ -214,7 +214,11 @@ Private Sub add_recv()
                                         Dim czy_znalazlem_pn As Boolean
                                         czy_znalazlem_pn = False
                                         For Each i In p.pns
-                                            If CStr(i.pn) = CStr(ki) Then
+                                        
+                                            ' mogla byc tak ze przedtem mialem match na poziomie Cstr
+                                            ' i na ekranie historii bylo to dodatkowe zero po lewej stronie co
+                                            ' moglo zaciemniac obraz
+                                            If CLng(i.pn) = CLng(ki) Then
                                                 czy_znalazlem_pn = True
                                                 If IsNumeric(.qty(Int(x))) Then
                                                 
@@ -308,7 +312,7 @@ Private Sub add_recv()
                             End If
                             
                             m.sendKeys "<pf8>"
-                            
+                            y = 1
                             
                         Loop While True
                     End If

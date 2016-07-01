@@ -35,12 +35,14 @@ Global Const G_RECV_STR_ON_ZERO = "RECV NA ZERO"
 Global Const G_RECV_STR_BOOKED = "BOOKED"
 Global Const G_RECV_STR_BOOKED_NOT_INLINE = "BOOKED BUT NOT WITH SAME QTY"
 Global Const G_RECV_STR_INTRANSIT = "IN TRANSIT"
+Global Const G_RECV_STR_INTRANSIT_BUT_DIFF_QTY = "IN TRANSIT BUT DIFF QTY"
 Global Const G_RECV_STR_ASN_MISSING = "ASN MISSING"
 Global Const G_RECV_STR_PU_DATE_IN_FUTURE = "PU DATE IN FUTURE"
 Global Const G_RECV_STR_PTA = "PTA"
 Global Const G_RECV_STR_MATCH_ON_NAME = "MATCH ON NAME"
 Global Const G_RECV_STR_NEGATIVE_RECV = "NEGATIVE RECV"
 Global Const G_RECV_STR_POT_RECV = "POT RECV"
+Global Const G_RECV_STR_ONLY_PUS_NAME_MATCH = "ONLY PUS NAME MATCH"
 
 
 Global Const RECV_STATUS_COLUMN = 9
@@ -65,7 +67,7 @@ Global Const COMMENT_SOURCE_SH_NM = "comment_source"
 
 ' HISTORY SECTION
 ' ==========================================
-Global Const ILE_DNI = 50
+Global Const ILE_DNI = 100
 ' ==========================================
 
 ' this workbook const sheets

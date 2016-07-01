@@ -93,6 +93,8 @@ Public Sub take_puses_from_mgo(m As MGO, scr As ZK7PPUM0, strpn As String)
                             item.del_qty = scr.PART_QTY(Int(x))
                             item.recv = 0
                             
+                            item.content_source = CONTENT_FROM_PUS
+                            
                             p.pns.Add item
                             p.on_wizard = False
                         End If
@@ -108,6 +110,8 @@ Public Sub take_puses_from_mgo(m As MGO, scr As ZK7PPUM0, strpn As String)
                         item.qty = 0
                         item.del_qty = scr.PART_QTY(Int(x))
                         item.recv = 0
+                        
+                        item.content_source = CONTENT_FROM_PUS
                         
                         
                         Set p = Nothing
@@ -217,6 +221,7 @@ Public Sub take_asns_from_mgo(m As MGO, scr As MS9PO400)
                             item.qty = 0
                             item.del_qty = scr.qty(Int(i))
                             item.recv = 0
+                            item.content_source = CONTENT_FROM_ASN
                             
                             p.pns.Add item
                             p.on_wizard = False
@@ -231,6 +236,8 @@ Public Sub take_asns_from_mgo(m As MGO, scr As MS9PO400)
                         item.qty = 0
                         item.del_qty = scr.qty(Int(i))
                         item.recv = 0
+                        
+                        item.content_source = CONTENT_FROM_ASN
                         
                         
                         Set p = Nothing
@@ -394,6 +401,8 @@ Private Sub pracuj_na_danych()
                     If Not item Is Nothing Then
                     
                     
+                    
+                    
                         x = 2
                         czy_dopisujemy_nowy_rekord_na_dnie = True
                         Do
@@ -416,7 +425,7 @@ Private Sub pracuj_na_danych()
                                 If Trim(from_pus_name_from_object) = Trim(from_cell) Then
                                 
                                 
-                                    this_psh.Cells(x, Cow.PUSES_PUS_NAME) = from_cell
+                                    ' this_psh.Cells(x, Cow.PUSES_PUS_NAME) = from_cell
                                 
                                     this_psh.Cells(x, Cow.PUSES_DEL_QTY) = item.del_qty
                                     this_psh.Cells(x, Cow.PUSES_ON_MGO) = p.on_mgo
@@ -424,9 +433,11 @@ Private Sub pracuj_na_danych()
                                     ' recv
                                     this_psh.Cells(x, Cow.PUSES_RECV) = item.recv
                                     
+                                    ' Debug.Print item.content_source
+                                    
                                     
                                     def_recv_status this_psh.Cells(x, Cow.PUSES_BOOL_RECV), _
-                                        p, CLng(this_psh.Cells(x, Cow.PUSES_RECV)), _
+                                        p, item, CLng(this_psh.Cells(x, Cow.PUSES_RECV)), _
                                         CLng(this_psh.Cells(x, Cow.PUSES_QTY)), _
                                         CLng(this_psh.Cells(x, Cow.PUSES_DEL_QTY)), _
                                         True
@@ -478,7 +489,7 @@ Private Sub pracuj_na_danych()
                             this_psh.Cells(x, 7) = item.del_qty
                             this_psh.Cells(x, 8) = item.recv
                             
-                            def_recv_status this_psh.Cells(x, 9), p, CLng(item.recv), CLng(item.qty), CLng(item.del_qty), False
+                            ' def_recv_status this_psh.Cells(x, 9), p, item, CLng(item.recv), CLng(item.qty), CLng(item.del_qty), False
                             
                             
                             
@@ -499,64 +510,116 @@ End Sub
 
 Private Sub def_recv_status(ByRef r As Range, _
     mp As pus, _
+    i As PnInPus, _
     lng_recv As Long, lng_qty As Long, long_del_qty As Long, _
     Optional dopasowanie_po_nazwie As Boolean)
     
-    If dopasowanie_po_nazwie Then
     
-        If CDate(mp.sdate) > CDate(Now) Then
-            mp.recv = PU_DATE_IN_FUTURE
-            r = Cow.G_RECV_STR_PU_DATE_IN_FUTURE
-        
-        ElseIf CLng(lng_recv) = CLng(lng_qty) And CLng(lng_recv) > 0 Then
-                                
-            mp.recv = INLINE_WITH_QTY
-            r = Cow.G_RECV_STR_BOOKED
-            
-        ElseIf CLng(lng_qty) = CLng(long_del_qty) And CLng(lng_qty) > 0 Then
-        
-            mp.recv = IN_TRANSIT
-            r = Cow.G_RECV_STR_INTRANSIT
-        ElseIf CLng(lng_recv) > 0 And CLng(lng_qty) > 0 Then
-        
-            mp.recv = NOT_INLINE_WITH_QTY
-            r = Cow.G_RECV_STR_BOOKED_NOT_INLINE
-        
-        ElseIf CLng(lng_qty) <> CLng(long_del_qty) And CLng(lng_qty) > 0 Then
-            
-            mp.recv = NOT_INLINE_WITH_QTY
-            r = Cow.G_RECV_STR_INTRANSIT_BUT_DIFF_QTY
-            
-        ElseIf CLng(lng_recv) < 0 Then
-            
-            mp.recv = NEGATIVE_RECV
-            r = Cow.G_RECV_STR_NEGATIVE_RECV
-            
-        
-        ElseIf dopasowanie_po_nazwie Then
-        
-            mp.recv = ONLY_PUS_NAME_MATCH
-            r = Cow.G_RECV_STR_ONLY_PUS_NAME_MATCH
-        
-        
-        Else
-        
-            mp.recv = RECV_TBD
-            r = Cow.G_RECV_STR_TBD
-        End If
+    
+    If (CStr(r) = Cow.G_RECV_STR_BOOKED) Or (CStr(r) = Cow.G_RECV_STR_INTRANSIT) Then
     Else
     
-        ' nie ma dopasowanie po nazwie pus
-        ' zatem ja bym sie narazie skupil tylko na asn missing i juz
-        If (CStr(mp.pusname) Like "*PTA*") Or (Not (CStr(mp.pusname) Like "*FMA*")) Then
-            mp.recv = PTA
-            r = Cow.G_RECV_STR_PTA
+        If dopasowanie_po_nazwie Then
+        
+        
+            If CDate(mp.sdate) > CDate(Now) Then
+                mp.recv = PU_DATE_IN_FUTURE
+                r = Cow.G_RECV_STR_PU_DATE_IN_FUTURE
+                
+                
+            ElseIf (i.content_source = CONTENT_FROM_HISTORY) And (CLng(lng_recv) > 0) Then
+            
+                ' zatem tylko recv
+                
+                If CLng(lng_recv) = CLng(lng_qty) Then
+                    mp.recv = INLINE_WITH_QTY
+                    r = Cow.G_RECV_STR_BOOKED
+                Else
+                    mp.recv = NOT_INLINE_WITH_QTY
+                    r = Cow.G_RECV_STR_BOOKED_NOT_INLINE
+                End If
+                
+            ElseIf (i.content_source = CONTENT_FROM_ASN) And (CLng(long_del_qty) > 0) Then ' Or (i.content_source = CONTENT_FROM_PUS) Then
+                
+                ' dane tylko z po400
+                If CLng(lng_qty) = CLng(long_del_qty) Then
+                    mp.recv = INLINE_WITH_QTY
+                    r = Cow.G_RECV_STR_INTRANSIT
+                Else
+                    mp.recv = NOT_INLINE_WITH_QTY
+                    r = Cow.G_RECV_STR_INTRANSIT_BUT_DIFF_QTY
+                End If
+                
+            
+            
+            
+            
+            ElseIf i.content_source = CONTENT_FROM_WIZARD Then
+                MsgBox "nie powinno znalezc dopasowania z drugim pusem z wizarda!"
+                End
+            Else
+                mp.recv = ONLY_PUS_NAME_MATCH
+                r = Cow.G_RECV_STR_ONLY_PUS_NAME_MATCH
+                
+                If i.content_source = CONTENT_FROM_HISTORY Then
+                    r = r & ", check History Screen"
+                ElseIf i.content_source = CONTENT_FROM_ASN Then
+                    r = r & ", check MS9PO400 Screen"
+                End If
+            End If
+            
+            'ElseIf CLng(lng_recv) = CLng(lng_qty) And CLng(lng_recv) > 0 Then
+            '
+            '    mp.recv = INLINE_WITH_QTY
+            '    r = Cow.G_RECV_STR_BOOKED
+            '
+            'ElseIf CLng(lng_qty) = CLng(long_del_qty) And CLng(lng_qty) > 0 Then
+           '
+           '     mp.recv = IN_TRANSIT
+           '     r = Cow.G_RECV_STR_INTRANSIT
+           '
+           '
+           ' ElseIf (CLng(lng_recv) <> CLng(lng_qty)) And (CLng(lng_qty) <> CLng(long_del_qty)) And (CLng(lng_recv) > 0 And CLng(lng_qty) > 0) Then
+           '
+           '     mp.recv = NOT_INLINE_WITH_QTY
+           '     r = Cow.G_RECV_STR_BOOKED_NOT_INLINE
+           '
+           ' ElseIf ((CLng(lng_qty) <> CLng(long_del_qty)) And (CLng(lng_qty) > 0) And (CLng(lng_recv) = 0)) Then
+           '
+           '
+           '     mp.recv = NOT_INLINE_WITH_QTY
+           '     r = Cow.G_RECV_STR_INTRANSIT_BUT_DIFF_QTY
+           '
+           ' ElseIf CLng(lng_recv) < 0 And CLng(long_del_qty) = 0 Then
+           '
+           '     mp.recv = NEGATIVE_RECV
+           '     r = Cow.G_RECV_STR_NEGATIVE_RECV
+           '
+           '
+            'ElseIf dopasowanie_po_nazwie Then
+            '
+            ''    mp.recv = ONLY_PUS_NAME_MATCH
+            '    r = Cow.G_RECV_STR_ONLY_PUS_NAME_MATCH
+           '
+            '
+            'Else
+           '
+           '     mp.recv = RECV_TBD
+           '     r = Cow.G_RECV_STR_TBD
+           ' End If
         Else
-            mp.recv = ASN_MISSING
-            r = Cow.G_RECV_STR_ASN_MISSING
+        
+            ' nie ma dopasowanie po nazwie pus
+            ' zatem ja bym sie narazie skupil tylko na asn missing i juz
+            If (CStr(mp.pusname) Like "*PTA*") Or (Not (CStr(mp.pusname) Like "*FMA*")) Then
+                mp.recv = PTA
+                r = Cow.G_RECV_STR_PTA
+            Else
+                mp.recv = ASN_MISSING
+                r = Cow.G_RECV_STR_ASN_MISSING
+            End If
         End If
     End If
-    
 End Sub
 
 
@@ -610,6 +673,8 @@ Public Sub take_puses_from_wizard(psh As Worksheet)
                     item.qty = psh.Cells(r.Row, Cow.O_Pick_up_Qty)
                     item.del_qty = 0
                     item.recv = 0
+                    
+                    item.content_source = CONTENT_FROM_WIZARD
                     
                     
                     Set p = Nothing
@@ -726,8 +791,8 @@ Public Sub put_puses_into_this_puses_sh()
             this_psh.Cells(x, 7) = item.del_qty
             this_psh.Cells(x, 8) = item.recv
             ' this_psh.Cells(x, 9) = p.recv
-            
-            def_recv_status this_psh.Cells(x, Cow.RECV_STATUS_COLUMN), p, CLng(item.recv), CLng(item.qty), CLng(item.del_qty)
+            ' Debug.Print TypeName(item)
+            def_recv_status this_psh.Cells(x, Cow.RECV_STATUS_COLUMN), p, item, CLng(item.recv), CLng(item.qty), CLng(item.del_qty)
             
             
             

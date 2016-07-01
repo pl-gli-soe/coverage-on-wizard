@@ -68,7 +68,7 @@ Private Sub ListBox1_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
         
             Dim w As IPUSTaker
             Set w = New WizardHandler
-            w.pobierzPusy ich, Me.ListBox1.Value
+            w.pobierzPusy ich, CStr(Me.ListBox1.Value)
         ElseIf e = FOMULARZ_WYBORU_PLIKU_DLA_RQM Then
             
             Dim r As IRqmTaker

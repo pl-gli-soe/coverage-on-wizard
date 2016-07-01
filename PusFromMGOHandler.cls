@@ -98,29 +98,36 @@ Private Sub m_pobierz_pusy()
     
         For Each ki In pnl.pn_dic.Keys()
         
-            If CStr(UCase(m.actualScreen)) <> "ZK7PPUS0" Then
         
-                m.sendKeys "<Clear>"
-                m.sendKeys "zk7ppus0 <Enter>"
-            
-            End If
+            ' wzryucam w ogole sciaganie danzch z ppus0
+            If False Then
         
+                If CStr(UCase(m.actualScreen)) <> "ZK7PPUS0" Then
             
-            .plt = pnl.plt
-            .pn = "        "
-            .pn = ki
-            m.submit
-            
-            m.sendKeys "<pf12>"
-            
-            ' wait and then
-            If CStr(UCase(m.actualScreen)) = "ZK7PPUM0" Then
+                    m.sendKeys "<Clear>"
+                    m.sendKeys "zk7ppus0 <Enter>"
                 
-                With m.pZK7PPUM0
+                End If
+            
                 
-                    ph.take_puses_from_mgo m, m.pZK7PPUM0, CStr(ki)
-                End With
+                .plt = pnl.plt
+                .pn = "        "
+                .pn = ki
+                m.submit
+                
+                m.sendKeys "<pf12>"
+                
+                ' wait and then
+                If CStr(UCase(m.actualScreen)) = "ZK7PPUM0" Then
+                    
+                    With m.pZK7PPUM0
+                    
+                        ph.take_puses_from_mgo m, m.pZK7PPUM0, CStr(ki)
+                    End With
+                End If
             Else
+            
+            
             
                 m.sendKeys "<Clear>"
                 m.sendKeys "ms9po400 <Enter>"
@@ -226,6 +233,8 @@ Private Sub add_recv()
                                                     ' wiekszych niz 1k
                                                     i.recv = CLng(Replace(CStr(.qty(Int(x))), ",", ""))
                                                     
+                                                    i.content_source = CONTENT_FROM_HISTORY
+                                                    
                                                     
                                                     If CLng(.qty(Int(x))) = 0 Then
                                                         p.recv = ON_ZERO
@@ -252,6 +261,8 @@ Private Sub add_recv()
                                             
                                                 i.recv = CLng(Replace(CStr(.qty(Int(x))), ",", ""))
                                                 
+                                                i.content_source = CONTENT_FROM_HISTORY
+                                                
                                                 If CLng(.qty(Int(x))) = 0 Then
                                                     p.recv = ON_ZERO
                                                 ElseIf CLng(i.recv) = CLng(i.qty) Then
@@ -275,6 +286,8 @@ Private Sub add_recv()
                                         
                                         i.pn = m.pMS9PH100.pn
                                         i.recv = CLng(Replace(CStr(.qty(Int(x))), ",", ""))
+                                        
+                                        i.content_source = CONTENT_FROM_HISTORY
                                         
                                         
                                         Set p = Nothing

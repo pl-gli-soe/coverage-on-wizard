@@ -202,4 +202,14 @@ Attribute VB_Name = "VersionModule"
 ' ==================================================================================================
 
 
+' ver 1.06 dev 2016-06-27
+' ==================================================================================================
+'
+' poprawiona logika definiowania pusow plus usuniecie pot recv
+' proba testu logiki dla tylko dopasowanej nazwy.
+' dodatkowo nie wzialem pod uwage ze recv rowniez moze miec wplyw na zmiene definicji linii
+'
+' ==================================================================================================
+
+
 ' -----------------------------------------------------------------------------------------------------------------

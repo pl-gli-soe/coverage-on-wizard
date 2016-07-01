@@ -122,6 +122,7 @@ Public Enum E_RECV_TYPE
     PTA = 6
     PU_DATE_IN_FUTURE = 7
     NEGATIVE_RECV = 8
+    ONLY_PUS_NAME_MATCH = 9
 End Enum
 ' ---------------------
 

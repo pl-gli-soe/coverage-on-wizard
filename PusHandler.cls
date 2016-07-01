@@ -403,17 +403,17 @@ Private Sub pracuj_na_danych()
                             
                             ' part numbery sa posrotwane wiec swobodnie w pierwszej kolejnosci sprawdzamy
                             ' czy dalej jestesmy w jednym worku
-                            If CStr(item.pn) = CStr(this_psh.Cells(x, Cow.PUSES_PN)) Then
+                            If CLng(item.pn) = CLng(this_psh.Cells(x, Cow.PUSES_PN)) Then
                             
                                 'from_cell = Replace(CStr(this_psh.Cells(x, Cow.PUSES_PUS_NAME)), "0", "")
                                 'from_pus_name_from_object = Replace(CStr(p.pusname), "0", "")
                                 'If (from_pus_name_from_object = from_cell) Or takie_same_4_od_konca(from_cell, from_pus_name_from_object) Then
                                 
-                                from_cell = CStr(this_psh.Cells(x, Cow.PUSES_PUS_NAME))
-                                from_pus_name_from_object = CStr(p.pusname)
+                                from_cell = Trim(CStr(this_psh.Cells(x, Cow.PUSES_PUS_NAME)))
+                                from_pus_name_from_object = Trim(CStr(p.pusname))
                                 
                                 ' tutaj bardzo restrykcyjnie sprawdzmy czy nazwy pusow sa identyczne
-                                If from_pus_name_from_object = from_cell Then
+                                If Trim(from_pus_name_from_object) = Trim(from_cell) Then
                                 
                                 
                                     this_psh.Cells(x, Cow.PUSES_PUS_NAME) = from_cell
@@ -428,7 +428,8 @@ Private Sub pracuj_na_danych()
                                     def_recv_status this_psh.Cells(x, Cow.PUSES_BOOL_RECV), _
                                         p, CLng(this_psh.Cells(x, Cow.PUSES_RECV)), _
                                         CLng(this_psh.Cells(x, Cow.PUSES_QTY)), _
-                                        CLng(this_psh.Cells(x, Cow.PUSES_DEL_QTY))
+                                        CLng(this_psh.Cells(x, Cow.PUSES_DEL_QTY)), _
+                                        True
                                     
                                     ' checks
                                     p.log = ""
@@ -477,7 +478,7 @@ Private Sub pracuj_na_danych()
                             this_psh.Cells(x, 7) = item.del_qty
                             this_psh.Cells(x, 8) = item.recv
                             
-                            def_recv_status this_psh.Cells(x, 9), p, CLng(item.recv), CLng(item.qty), CLng(item.del_qty)
+                            def_recv_status this_psh.Cells(x, 9), p, CLng(item.recv), CLng(item.qty), CLng(item.del_qty), False
                             
                             
                             
@@ -496,45 +497,64 @@ Private Sub pracuj_na_danych()
     End If
 End Sub
 
-Private Sub def_recv_status(ByRef r As Range, mp As pus, lng_recv As Long, lng_qty As Long, long_del_qty As Long)
+Private Sub def_recv_status(ByRef r As Range, _
+    mp As pus, _
+    lng_recv As Long, lng_qty As Long, long_del_qty As Long, _
+    Optional dopasowanie_po_nazwie As Boolean)
     
+    If dopasowanie_po_nazwie Then
     
-    
-    If CDate(mp.sdate) > CDate(Now) Then
-        mp.recv = PU_DATE_IN_FUTURE
-        r = Cow.G_RECV_STR_PU_DATE_IN_FUTURE
-    
-    ElseIf CLng(lng_recv) = CLng(lng_qty) And CLng(lng_recv) > 0 Then
-                            
-        mp.recv = INLINE_WITH_QTY
-        r = Cow.G_RECV_STR_BOOKED
+        If CDate(mp.sdate) > CDate(Now) Then
+            mp.recv = PU_DATE_IN_FUTURE
+            r = Cow.G_RECV_STR_PU_DATE_IN_FUTURE
         
-    ElseIf CLng(lng_qty) = CLng(long_del_qty) And CLng(lng_qty) > 0 Then
-    
-        mp.recv = IN_TRANSIT
-        r = Cow.G_RECV_STR_INTRANSIT
-    ElseIf CLng(lng_recv) > 0 And CLng(lng_qty) > 0 Then
-    
-        mp.recv = NOT_INLINE_WITH_QTY
-        r = Cow.G_RECV_STR_BOOKED_NOT_INLINE
+        ElseIf CLng(lng_recv) = CLng(lng_qty) And CLng(lng_recv) > 0 Then
+                                
+            mp.recv = INLINE_WITH_QTY
+            r = Cow.G_RECV_STR_BOOKED
+            
+        ElseIf CLng(lng_qty) = CLng(long_del_qty) And CLng(lng_qty) > 0 Then
         
-    ElseIf (CStr(mp.pusname) Like "*PTA*") Or (Not (CStr(mp.pusname) Like "*FMA*")) Then
-        mp.recv = PTA
-        r = Cow.G_RECV_STR_PTA
-    
-    ElseIf CLng(lng_recv) < 0 Then
-    
-        mp.recv = NEGATIVE_RECV
-        r = Cow.G_RECV_STR_NEGATIVE_RECV
+            mp.recv = IN_TRANSIT
+            r = Cow.G_RECV_STR_INTRANSIT
+        ElseIf CLng(lng_recv) > 0 And CLng(lng_qty) > 0 Then
         
-    ElseIf CStr(r.Offset(0, 1)) <> CStr(mp.pusname) Then
+            mp.recv = NOT_INLINE_WITH_QTY
+            r = Cow.G_RECV_STR_BOOKED_NOT_INLINE
         
-        mp.recv = ASN_MISSING
-        r = Cow.G_RECV_STR_ASN_MISSING
+        ElseIf CLng(lng_qty) <> CLng(long_del_qty) And CLng(lng_qty) > 0 Then
+            
+            mp.recv = NOT_INLINE_WITH_QTY
+            r = Cow.G_RECV_STR_INTRANSIT_BUT_DIFF_QTY
+            
+        ElseIf CLng(lng_recv) < 0 Then
+            
+            mp.recv = NEGATIVE_RECV
+            r = Cow.G_RECV_STR_NEGATIVE_RECV
+            
+        
+        ElseIf dopasowanie_po_nazwie Then
+        
+            mp.recv = ONLY_PUS_NAME_MATCH
+            r = Cow.G_RECV_STR_ONLY_PUS_NAME_MATCH
+        
+        
+        Else
+        
+            mp.recv = RECV_TBD
+            r = Cow.G_RECV_STR_TBD
+        End If
     Else
     
-        mp.recv = RECV_TBD
-        r = Cow.G_RECV_STR_TBD
+        ' nie ma dopasowanie po nazwie pus
+        ' zatem ja bym sie narazie skupil tylko na asn missing i juz
+        If (CStr(mp.pusname) Like "*PTA*") Or (Not (CStr(mp.pusname) Like "*FMA*")) Then
+            mp.recv = PTA
+            r = Cow.G_RECV_STR_PTA
+        Else
+            mp.recv = ASN_MISSING
+            r = Cow.G_RECV_STR_ASN_MISSING
+        End If
     End If
     
 End Sub
@@ -752,7 +772,10 @@ Public Sub pus_match_report_generator(o As Worksheet, csh As Worksheet)
     'o.Range("J1") = "CBAL"
     
     wypelnij_cbalami o, csh
-    dodaj_do_siebie_potential_recvs o
+    
+    ' to za duzo zmienia narazie usune ta logike
+    ' tym bardziej ze jest ona bardzo nie spojna
+    ' dodaj_do_siebie_potential_recvs o
     
 End Sub
 

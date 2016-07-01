@@ -29,3 +29,5 @@ Public pn As String
 Public qty As Long
 Public del_qty As Long
 Public recv As Long
+
+Public content_source As E_PUS_CONTENT_FROM_WHERE

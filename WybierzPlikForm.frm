@@ -34,6 +34,8 @@ Attribute VB_Exposed = False
 Private e As E_PUS_CZY_RQM_CZY_CBAL
 Private ich As InitConfigHandler
 
+Public wgen As Workbook
+
 Public Sub init(m_e As E_PUS_CZY_RQM_CZY_CBAL, Optional mich As InitConfigHandler)
 
     e = m_e
@@ -77,10 +79,21 @@ Private Sub ListBox1_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
             
         ElseIf e = FOMULARZ_WYBORU_PLIKU_DLA_CBAL Then
         
-            Set Cow.G_SOURCE_WIZARD = Workbooks(CStr(Me.ListBox1.Value))
-            Dim c As ICBalFromHandler
-            Set c = New CBalFromWizardHandler
-            c.pobierzCbale Nothing, Workbooks(CStr(Me.ListBox1.Value))
+        
+            If ich.cbalFromWhere = E_CBAL_FROM_WIZARD Then
+        
+                Set Cow.G_SOURCE_WIZARD = Workbooks(CStr(Me.ListBox1.Value))
+                Dim c As ICBalFromHandler
+                Set c = New CBalFromWizardHandler
+                c.pobierzCbale Nothing, Workbooks(CStr(Me.ListBox1.Value))
+            ElseIf ich.cbalFromWhere = E_CBAL_FROM_W_GENERAL Then
+            
+            
+                Set Cow.G_SOURCE_WIZARD = Workbooks(CStr(Me.ListBox1.Value))
+                Dim wgen_handler As ICBalFromHandler
+                Set wgen_handler = New CBALFromWGENERALHandler
+                wgen_handler.pobierzCbale Nothing, Workbooks(CStr(Me.ListBox1.Value))
+            End If
         End If
         
     Else

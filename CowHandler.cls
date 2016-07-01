@@ -110,6 +110,9 @@ Private Sub create_cbal_flat_table()
         take_cbal_from_mgo
     ElseIf mich.cbalFromWhere = E_CBAL_FROM_WIZARD Then
         take_cbal_from_wizard
+    ElseIf mich.cbalFromWhere = E_CBAL_FROM_W_GENERAL Then
+        take_cbal_from_wgen
+        
     Else
         MsgBox "wciaz brak odpowiedniej implementacji"
     End If
@@ -286,6 +289,15 @@ Private Sub take_cbal_from_mgo()
     Set rqmsy_z_mgo = New CBalFromMGOHandler
     
     rqmsy_z_mgo.pobierzCbale mich
+End Sub
+
+Public Sub take_cbal_from_wgen()
+    
+    With WybierzPlikForm
+        .init FOMULARZ_WYBORU_PLIKU_DLA_CBAL, mich
+        .show
+    End With
+    
 End Sub
 
 Private Sub take_data_from_mgo()

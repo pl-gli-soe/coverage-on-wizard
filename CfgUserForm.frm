@@ -78,6 +78,8 @@ Private Sub BtnSubmit_Click()
         ich.cbalFromWhere = E_CBAL_FROM_WIZARD
     ElseIf Me.OptionButtonCbalFromMGO.Value = True Then
         ich.cbalFromWhere = E_CBAL_FROM_MGO
+    ElseIf Me.OptionButtonCbalFromWGEN.Value = True Then
+        ich.cbalFromWhere = E_CBAL_FROM_W_GENERAL
     End If
     
     ich.cbalFlatTable = Me.CheckBoxCBALs.Value
